@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Filters">
+      <UniqueIdentifier>{f554ee17-2cd2-4658-bcc1-03228c1ccd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{71919cb5-9ab4-422d-8bd9-5b3fd8f90641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media">
+      <UniqueIdentifier>{8761a585-bdce-4b75-a1a0-625cabb238e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Subsession">
+      <UniqueIdentifier>{fcbe5ec3-df26-4f6d-ab93-971839fd1a2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TaskScheduler">
+      <UniqueIdentifier>{04bf8080-a067-4dd2-977e-b543e4797ecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{4632dc6e-a2f9-4dc0-a5da-b18b78fc01b0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionInfo.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveAMRAudioRTPSink.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveH264VideoDeviceSource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveH265VideoDeviceSource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveMPEGVideoDeviceSource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveAMRAudioDeviceSource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveDeviceSource.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiMediaSampleBuffer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplexedMediaHeader.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketManagerMediaChannel.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleMediaSampleBuffer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="IMediaSampleBuffer.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaSample.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="MediaChannel.h">
+      <Filter>Media</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonRtsp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFrameGrabber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleFrameGrabber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveMediaSubsession.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveSourceTaskScheduler.h">
+      <Filter>TaskScheduler</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveSourceTaskScheduler0.h">
+      <Filter>TaskScheduler</Filter>
+    </ClInclude>
+    <ClInclude Include="ChannelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveMediaSubsessionFactory.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveAACSubsession.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveAMRSubsession.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveH264Subsession.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiChannelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveRtspServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveRtspClientConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveRtspClientSession.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveMPEGSubsession.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="LiveH265Subsession.h">
+      <Filter>Subsession</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleChannelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioChannelDescriptor.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalDefs.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="INetworkCodecControlInterface.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="IRateAdaptation.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="IRateAdaptationFactory.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="IRateController.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpTransmissionStats.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRateAdaptation.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRateAdaptationFactory.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="StepBasedRateController.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoChannelDescriptor.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FiltersMediaSources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveAMRAudioRTPSink.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveH264VideoDeviceSource.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveH265VideoDeviceSource.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveMPEGVideoDeviceSource.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveAMRAudioDeviceSource.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveDeviceSource.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiMediaSampleBuffer.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketManagerMediaChannel.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleMediaSampleBuffer.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaSample.cpp">
+      <Filter>Media</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveMediaSubsession.cpp">
+      <Filter>Subsession</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveSourceTaskScheduler.cpp">
+      <Filter>TaskScheduler</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveSourceTaskScheduler0.cpp">
+      <Filter>TaskScheduler</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveAACSubsession.cpp">
+      <Filter>Subsession</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveAMRSubsession.cpp">
+      <Filter>Subsession</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveH264Subsession.cpp">
+      <Filter>Subsession</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiChannelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveRtspServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveRtspClientConnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveRtspClientSession.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveMPEGSubsession.cpp">
+      <Filter>Subsession</Filter>
+    </ClCompile>
+    <ClCompile Include="LiveH265Subsession.cpp">
+      <Filter>Subsession</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalDefs.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRateAdaptation.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRateAdaptationFactory.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
