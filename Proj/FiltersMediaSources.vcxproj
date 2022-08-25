@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props" Condition="Exists('..\..\packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props')" />
+  <Import Project="packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props" Condition="Exists('packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props')" />
+  <Import Project="packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props" Condition="Exists('packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props')" />
   <Import Project="packages\SalientSys.rtsp-logger.v142.mt.1.0.2\build\native\SalientSys.rtsp-logger.v142.mt.props" Condition="Exists('packages\SalientSys.rtsp-logger.v142.mt.1.0.2\build\native\SalientSys.rtsp-logger.v142.mt.props')" />
   <Import Project="packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props" Condition="Exists('packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props')" />
   <Import Project="packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props" Condition="Exists('packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props')" />
@@ -269,8 +270,8 @@
     <Error Condition="!Exists('packages\SalientSys.intel-tbb.10.0.3\build\native\SalientSys.intel-tbb.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.intel-tbb.10.0.3\build\native\SalientSys.intel-tbb.props'))" />
     <Error Condition="!Exists('packages\boost.1.72.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.72.0.0\build\boost.targets'))" />
     <Error Condition="!Exists('packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props'))" />
-    <Error Condition="!Exists('packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props'))" />
     <Error Condition="!Exists('packages\SalientSys.rtsp-logger.v142.mt.1.0.2\build\native\SalientSys.rtsp-logger.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.rtsp-logger.v142.mt.1.0.2\build\native\SalientSys.rtsp-logger.v142.mt.props'))" />
-    <Error Condition="!Exists('..\..\packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props'))" />
   </Target>
 </Project>
