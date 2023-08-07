@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -38,8 +38,11 @@ namespace CvRtsp
 	class ChannelManager;
 	class LiveMediaSubsession;
 
+	/// Alias for pair containing channel session identifier and the media subsession.
+	using LiveMediaSession = std::pair<CvRtsp::UniqueChannelSessionIdentifier, CvRtsp::LiveMediaSubsession*>;
+
 	/// Alias for map, containing mediasubsession's identified by pair<channel-id, channel-name>
-	using LiveMediaSubSessionMap = std::map<UniqueChannelSessionIdentifier, LiveMediaSubsession*>;
+	using LiveMediaSubSessionMap = std::map<CvRtsp::UniqueChannelSessionIdentifier, CvRtsp::LiveMediaSubsession*>;
 
 	/// Maximum number of cycles in the while loop.
 	const unsigned MaxRevolutions = 60;
@@ -109,29 +112,13 @@ namespace CvRtsp
 		/// Processes all registered media subsessions.
 		void ProcessLiveMediaSessions();
 
-		void OnMediaReceived(std::vector<std::shared_ptr<MediaSample>> mediaSamples, CvRtsp::LiveMediaSubsession*);
-
-#pragma region Thread Processing
-		//private:
-		//	/// Exit event handle, used to signal class exit.
-		//	///
-		//	SmartHandle m_exitEvent;
-
-		//public:
-		//	/// Start background 
-		//	///
-		//	virtual void Start()
-		//	{
-		//		beginThread();
-		//	}
-
-		//	/// Stop background 
-		//	///
-		//	void Stop()
-		//	{
-		//		SetEvent(m_exitEvent);
-		//	}
-#pragma endregion
+		///
+		/// Processes media samples when received.
+		/// 
+		/// @param[in] mediaSamples		Vector of media samples.
+		/// @param[in] mediaSubsession	Session containing media samples.
+		/// 
+		void OnMediaReceived(std::vector<std::shared_ptr<MediaSample>> mediaSamples, CvRtsp::LiveMediaSubsession* mediaSubsession);
 
 	protected:
 		///
@@ -140,7 +127,7 @@ namespace CvRtsp
 
 	private:
 		/// "m_maxDelayTimeMicroSec" is in microseconds. Default time of once per second.
-		unsigned m_maxDelayTimeMicroSec = 10;
+		unsigned m_maxDelayTimeMicroSec = 5;
 
 		/// Packet manager that receives media packets from device/network interface.
 		ChannelManager& m_channelManager;

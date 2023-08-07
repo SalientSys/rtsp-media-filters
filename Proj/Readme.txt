@@ -35,3 +35,14 @@
 - VS2019, v142 toolset.
 - OutputDir: In $(Configuration)\$(Platform)
 - TargetName: Follows $(Configuration)\$(Platform)
+
+
+****************
+
+Now
+- Remove dependency from CV code + See what extent changes have been made to livemediaext source
+- if steve's pr merged, revert name to Socket, build & update nuget + push changes
+
+N8
+- pull + test + submit PR for 6250 & 6184
+- update mantis bugs from Priya's feedback

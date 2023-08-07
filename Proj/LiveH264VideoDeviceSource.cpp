@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -169,6 +169,27 @@ RetrieveMediaSampleFromBuffer()
 
 	auto mediaSamples = splitPayloadIntoMediaSamples(dataBuffer, bufferSize, startTime);
 	m_mediaSampleQueue.insert(m_mediaSampleQueue.end(), mediaSamples.begin(), mediaSamples.end());
+
+	// If the media queue size exceeds the max that can be stored in the deque, remove enough samples
+	// from the deque until reaching one that contains an i frame.
+	if (m_mediaSampleQueue.size() > MaxMediaPackets)
+	{
+		// Dump frames until hit an Idr
+		auto foundIFrame{ false };
+		while (!foundIFrame && !m_mediaSampleQueue.empty())
+		{
+			const auto mediaSample = m_mediaSampleQueue.front();
+			foundIFrame = mediaSample->GetIsKeyFrame();
+			if (!foundIFrame)
+			{
+				m_mediaSampleQueue.pop_front();
+			}
+		}
+	}
+
+	std::stringstream ss;
+	ss <<" Media Sample queue size : " << m_mediaSampleQueue.size();
+	log_rtsp_debug(ss.str());
 
 	return true;
 }

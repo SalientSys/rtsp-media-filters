@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -23,6 +23,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ///
 #include "pch.h"
 
+#include <tbb/parallel_for_each.h>
 #include <boost/uuid/uuid_io.hpp>
 
 #include <rtsp-logger/RtspServerLogging.h>
@@ -36,7 +37,6 @@ using namespace CvRtsp;
 LiveSourceTaskScheduler0::
 LiveSourceTaskScheduler0(ChannelManager& channelManager)
 	: BasicTaskScheduler(m_maxDelayTimeMicroSec),
-	/*m_exitEvent(::CreateEventA(nullptr, TRUE, FALSE, nullptr)),*/
 	m_channelManager(channelManager),
 	m_samplesReceived(0),
 	m_hasRun(false)
@@ -82,12 +82,7 @@ doEventLoop(char volatile* watchVariable)
 		processMediaSubsessions();
 
 		log_rtsp_debug("Done processLiveSources, calling SingleStep.");
-		// run once
-		//if (m_hasRun)
-		//{
-		//	std::this_thread::sleep_for(std::chrono::seconds(60));
-		//	continue;
-		//}
+
 		SingleStep(m_maxDelayTimeMicroSec);
 
 		log_rtsp_debug("Done SingleStep.");
@@ -160,7 +155,6 @@ processLiveSources()
 {
 	log_rtsp_debug("Processing live sources.");
 
-	uint32_t sessionCount = 0;
 	uint32_t sampleCount = 0;
 	auto exit = false;
 
@@ -170,16 +164,14 @@ processLiveSources()
 	// i.e. some sessions may never be reached if the for always starts at begin and exits when 
 	// MaxSamplesToBeProcessedInEventLoop is reached. For the purpose of the single
 	// live media session this should suffice
-	while (sessionCount < MaxRevolutions)
-	{
-		for (auto mediaSubSessionPair : m_mediaSubSessionsMap)
+	tbb::parallel_for_each (m_mediaSubSessionsMap.cbegin(), m_mediaSubSessionsMap.cend(), [&](auto mediaSubSessionPair)
 		{
-			sampleCount = 0;
-			while (sampleCount < 15)
+			auto sampleCount = 0;
+			while (sampleCount < 30)
 			{
 				auto mediaSample = m_channelManager.GetMedia(mediaSubSessionPair.first.first,
 					mediaSubSessionPair.first.second, mediaSubSessionPair.second->GetSourceId());
-				
+
 				if (mediaSample == nullptr)
 				{
 					break;
@@ -189,16 +181,13 @@ processLiveSources()
 				mediaSample->SetChannelId(mediaSubSessionPair.first.first);
 				mediaSample->SetChannelName(mediaSubSessionPair.first.second);
 				mediaSample->SetSourceId(mediaSubSessionPair.second->GetSourceId());
-				
+
 				mediaSubSessionPair.second->AddMediaSample(mediaSample);
 
 				++sampleCount;
 			}
-		}
-		++sessionCount;
-	}
+		});
 }
-
 
 void 
 LiveSourceTaskScheduler0::
@@ -206,27 +195,24 @@ processMediaSubsessions()
 {
 	if (!m_mediaSubSessionsMap.empty())
 	{
-		auto mediaSubsessionIt = m_mediaSubSessionsMap.begin();
-		while (mediaSubsessionIt != end(m_mediaSubSessionsMap))
-		{
-			if (!mediaSubsessionIt->second->IsAnyActiveDeviceSourcePresent()
-				&& mediaSubsessionIt->second->HasServedVideoDeviceSource()
-				&& !mediaSubsessionIt->second->HasBeenProcessedToKill())
+		// UniqueChannelSessionIdentifier, LiveMediaSubsession*
+		tbb::parallel_for_each (m_mediaSubSessionsMap.begin(), m_mediaSubSessionsMap.end(), [&](LiveMediaSession mediaSubsessionIt)
 			{
-				// kill the channel(remote rtsp-session in camera-server for this associated subsession)
-				mediaSubsessionIt->second->KillChannel();
-			}
+				LiveMediaSubsession* subsession = mediaSubsessionIt.second;
+				if (!subsession->IsAnyActiveDeviceSourcePresent()
+					&& subsession->HasServedVideoDeviceSource()
+					&& !subsession->HasBeenProcessedToKill())
+				{
+					// kill the channel(remote rtsp-session in camera-server for this associated subsession)
+					subsession->KillChannel();
+				}
 
-			// if there was only one obj in map & we just deleted it?
-			if (m_mediaSubSessionsMap.empty())
-			{
-				break; // exit here
-			}
-			else
-			{
-				mediaSubsessionIt++;
-			}
-		}
+				// if there was only one obj in map & we just deleted it?
+				if (m_mediaSubSessionsMap.empty())
+				{
+					return; // exit here
+				}
+			});
 	}
 }
 
@@ -246,34 +232,14 @@ void
 LiveSourceTaskScheduler0::
 OnMediaReceived(std::vector<std::shared_ptr<MediaSample>> mediaSamples, CvRtsp::LiveMediaSubsession* liveMediaSubsession)
 {
-	//std::cout << "Media Received. Channel Id: " << mediaSample->GetChannelId() << ", Source Id: " << mediaSample->GetSourceId() << std::endl;
 	if (liveMediaSubsession)
 	{
 		for (auto mediaSample : mediaSamples)
 		{
-			//std::cout << "Media Received. Channel Id: " << mediaSample->GetChannelId() << ", Source Id: " << mediaSample->GetSourceId() << std::endl;
 			liveMediaSubsession->AddMediaSample(mediaSample);
 		}
 	}
-	//std::cout << "Single Step" << std::endl;
+
 	SingleStep(m_maxDelayTimeMicroSec);
 	m_hasRun = true;
-
-	//auto mediaSubSession = m_mediaSubSessionsMap.find(std::make_pair(mediaSample->GetChannelId(), mediaSample->GetSourceId()));
-	//if (mediaSubSession != m_mediaSubSessionsMap.end())
-	//{
-	//	mediaSubSession->second->AddMediaSample(mediaSample);
-	//	//std::cout << "Send Sample" << std::endl;
-	//}
-	//if (m_samplesReceived > MaxRevolutions)
-	//{
-	//	std::cout << "Single Step" << std::endl;
-	//	SingleStep(m_maxDelayTimeMicroSec);
-	//	m_hasRun = true;
-	//	m_samplesReceived = 0;
-	//}
-	//else
-	//{
-	//	++m_samplesReceived;
-	//}
 }
