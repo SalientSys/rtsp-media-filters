@@ -94,10 +94,10 @@ bool LiveAMRAudioDeviceSource::retrieveMediaSampleFromBuffer()
         else
         {
             // The frame header is OK
-#ifdef DEBUG
+
             fprintf(stderr, "Valid frame header 0x%02x -> ft %d -> frame size %d\n", fLastFrameHeader, ft, fFrameSize);
             log_rtsp_debug("Valid frame header " + to_string(fLastFrameHeader) + " -> ft " + to_string(ft) + " -> frame size " + to_string(fFrameSize) + ".");
-#endif
+
         }
     }
 #endif
