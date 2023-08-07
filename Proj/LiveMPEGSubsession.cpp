@@ -47,7 +47,7 @@ LiveMPEGSubsession::LiveMPEGSubsession(UsageEnvironment& env, LiveRtspServer& rP
     m_configStr(configStr),
     m_profileAndLevelIndication(profileAndLevelIndication)
 {
-    log_rtsp_debug("LiveMPEGSubsession() sdp config-bytes: " + m_configStr + " profile & level id: " + to_string(m_profileAndLevelIndication));
+    log_rtsp_debug("LiveMPEGSubsession() sdp config-bytes: " + m_configStr + " profile & level id: " + std::to_string(m_profileAndLevelIndication));
 }
 
 
