@@ -137,6 +137,7 @@ namespace CvRtsp
 
 		///
 		bool m_hasRun;
+		int m_count;
 
 		/// Map which stores ALL media subsessions. Each subsession is identified via a unique id.
 		//MediaSessionMap m_mediaSessions;

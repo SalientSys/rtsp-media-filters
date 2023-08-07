@@ -39,7 +39,8 @@ LiveSourceTaskScheduler0(ChannelManager& channelManager)
 	: BasicTaskScheduler(m_maxDelayTimeMicroSec),
 	m_channelManager(channelManager),
 	m_samplesReceived(0),
-	m_hasRun(false)
+	m_hasRun(false),
+	m_count(0)
 {
 
 }
@@ -199,13 +200,20 @@ processMediaSubsessions()
 		tbb::parallel_for_each (m_mediaSubSessionsMap.begin(), m_mediaSubSessionsMap.end(), [&](LiveMediaSession mediaSubsessionIt)
 			{
 				LiveMediaSubsession* subsession = mediaSubsessionIt.second;
-				if (!subsession->IsAnyActiveDeviceSourcePresent()
-					&& subsession->HasServedVideoDeviceSource()
-					&& !subsession->HasBeenProcessedToKill())
+				if (m_count % 30 == 0)
 				{
-					// kill the channel(remote rtsp-session in camera-server for this associated subsession)
-					subsession->KillChannel();
+					m_count = 0;
+
+					if (!subsession->IsAnyActiveDeviceSourcePresent()
+						&& subsession->HasServedVideoDeviceSource()
+						&& !subsession->HasBeenProcessedToKill())
+					{
+						// kill the channel(remote rtsp-session in camera-server for this associated subsession)
+						subsession->KillChannel();
+					}
 				}
+				else
+					m_count++;
 
 				// if there was only one obj in map & we just deleted it?
 				if (m_mediaSubSessionsMap.empty())
