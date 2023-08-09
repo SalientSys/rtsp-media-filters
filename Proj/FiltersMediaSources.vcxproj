@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props" Condition="Exists('packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props')" />
+  <Import Project="packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props" Condition="Exists('packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props')" />
   <Import Project="packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props" Condition="Exists('packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props')" />
   <Import Project="packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props" Condition="Exists('packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props')" />
   <Import Project="packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props" Condition="Exists('packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props')" />
@@ -83,7 +85,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\lib\v142\mt\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>..\..\CompleteView\packages\SalientSys.livemedia-ext.v142.mt.1.0.9\build\native\lib\v142\mt\Debug\x64</OutDir>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -274,5 +276,7 @@
     <Error Condition="!Exists('packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props'))" />
     <Error Condition="!Exists('packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.openssl.1.0.2.21\build\native\SalientSys.openssl.props'))" />
     <Error Condition="!Exists('packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.live555.v142.mt.1.0.3\build\native\SalientSys.live555.v142.mt.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props'))" />
   </Target>
 </Project>
