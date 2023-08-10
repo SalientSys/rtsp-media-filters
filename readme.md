@@ -15,3 +15,4 @@ VS2019 v142 toolset
 
 ## Notes   
 - Disabled C4996 warnings.
+- As we update this nuget, older versions (including proj, lib & nuget files) used are saved in `Older-Versions` folder.
