@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
+#ifndef _RTSP_SERVER_HH
 #include <live555/RTSPServer.hh>
+#endif
 #include "LiveRtspServer.h"
 
 namespace CvRtsp

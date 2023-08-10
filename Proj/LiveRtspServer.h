@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -29,7 +29,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #ifndef _RTSP_SERVER_HH
 #include <live555/RTSPServer.hh>
 #endif
+#ifndef _BASIC_USAGE_ENVIRONMENT_HH
 #include <live555/BasicUsageEnvironment.hh>
+#endif
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
@@ -122,7 +124,7 @@ namespace CvRtsp
 	public:
 		///
 		/// Constructor: called only by createNew();
-		LiveRtspServer(UsageEnvironment& env, int socket, Port rtspPort,
+		LiveRtspServer(UsageEnvironment& env, int ourSocketIPv4, int ourSocketIPv6, Port rtspPort,
 			UserAuthenticationDatabase* authDatabase, IRateAdaptationFactory* rateFactory,
 			IRateController* rateController);
 
@@ -207,7 +209,7 @@ namespace CvRtsp
 		/// @param[in] sourceId Source id.
 		/// @param[in] clientId Client id.
 		/// @param[in] ipAddress Ip address.
-		void OnClientJoin(const boost::uuids::uuid &channelId, uint32_t sourceId, uint32_t clientId, const std::string& ipAddress);
+		virtual void OnClientJoin(const boost::uuids::uuid &channelId, uint32_t sourceId, uint32_t clientId, const std::string& ipAddress);
 
 		///
 		/// Handler to be called when clients update.
@@ -216,7 +218,7 @@ namespace CvRtsp
 		/// @param[in] sourceId Source id.
 		/// @param[in] clientId Client id.
 		/// @param[in] channelIndex Channel index.
-		void OnClientUpdate(const boost::uuids::uuid& channelId, uint32_t sourceId, uint32_t clientId, uint32_t channelIndex);
+		virtual void OnClientUpdate(const boost::uuids::uuid& channelId, uint32_t sourceId, uint32_t clientId, uint32_t channelIndex);
 
 		///
 		/// Handler to be called when clients leave.
@@ -224,7 +226,7 @@ namespace CvRtsp
 		/// @param[in] channelId Channel id.
 		/// @param[in] sourceId Source id.
 		/// @param[in] clientId Client id.
-		void OnClientLeave(const boost::uuids::uuid& channelId, uint32_t sourceId, uint32_t clientId);
+		virtual void OnClientLeave(const boost::uuids::uuid& channelId, uint32_t sourceId, uint32_t clientId);
 
 		///
 		/// This called when the subsession associated with a specific channel has no
@@ -263,7 +265,7 @@ namespace CvRtsp
 		/// @param[in] clientAddr Client ip address.
 		///
 		/// @return Rtsp client connection.
-		RTSPClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr) override;
+		RTSPClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_storage const& clientAddr) override;
 
 		///
 		/// If you subclass "RTSPClientSession", then you must also redefine this virtual function in order

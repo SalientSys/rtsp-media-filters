@@ -1,4 +1,4 @@
-#ifndef COMMONRTSP_H
+﻿#ifndef COMMONRTSP_H
 #define COMMONRTSP_H
 
 #pragma once
@@ -139,7 +139,7 @@ namespace CvRtsp
 
 
 #pragma region Ports
-	static const int DEFAULT_RTSP_PORT = 554;
+	//int DEFAULT_RTSP_PORT = 554;
 #pragma endregion
 
 

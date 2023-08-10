@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -248,24 +248,22 @@ deleteStream(uint32_t clientSessionId, void*& streamToken)
 
 void
 LiveMediaSubsession::
-getStreamParameters(uint32_t clientSessionId, netAddressBits clientAddress,
+getStreamParameters(uint32_t clientSessionId, struct sockaddr_storage const& clientAddress,
 	Port const& clientRTPPort, Port const& clientRTCPPort, int tcpSocketNum, unsigned char rtpChannelId,
-	unsigned char rtcpChannelId, netAddressBits& destinationAddress, u_int8_t& destinationTTL,
+	unsigned char rtcpChannelId, struct sockaddr_storage& destinationAddress, u_int8_t& destinationTTL,
 	Boolean& isMulticast, Port& serverRTPPort, Port& serverRTCPPort, void*& streamToken)
 {
-	if (destinationAddress == 0)
+	if (addressIsNull(destinationAddress))
 	{
+		// normal case - use the client address as the destination address:
 		destinationAddress = clientAddress;
 	}
-
-	struct in_addr destinationAddr;
-	destinationAddr.s_addr = destinationAddress;
 
 	// client management
 	if (m_onJoin)
 	{
 		// Convert IpAddress to readable format
-		std::string ipAddress(inet_ntoa(destinationAddr));
+		std::string ipAddress(AddressString(destinationAddress).val());
 		m_onJoin(m_channelId, m_sourceId, clientSessionId, ipAddress);
 	}
 

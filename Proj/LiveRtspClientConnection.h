@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
+#ifndef _RTSP_SERVER_HH
 #include <live555/RTSPServer.hh>
+#endif
 #include "LiveRtspServer.h"
 
 namespace CvRtsp
@@ -16,7 +18,7 @@ namespace CvRtsp
 	public:
 		///
 		/// Constructor.
-		LiveRtspClientConnection(LiveRtspServer& ourServer, int clientSocket, struct sockaddr_in clientAddr);
+		LiveRtspClientConnection(LiveRtspServer& ourServer, int clientSocket, struct sockaddr_storage const& clientAddr);
 
 		///
 		/// Default destructor.
@@ -28,7 +30,7 @@ namespace CvRtsp
 
 		///
 		/// Getter for client address
-		struct sockaddr_in getClientAddr() const
+		struct sockaddr_storage getClientAddr() const
 		{
 			return fClientAddr;
 		}

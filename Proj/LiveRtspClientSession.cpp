@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 
 #include <cassert>
 
@@ -75,8 +75,7 @@ handleCmd_SETUP(RTSPServer::RTSPClientConnection* ourClientConnection,
 		assert(clientConnection);
 
 		// Convert IpAddress to readable format
-		struct in_addr destinationAddr; destinationAddr.s_addr = clientConnection->getClientAddr().sin_addr.s_addr;
-		std::string sIpAddress(inet_ntoa(destinationAddr));
+		std::string sIpAddress(AddressString(clientConnection->getClientAddr()).val());
 		log_rtsp_warning("Max connections (" + std::to_string(m_rtspParentServer->GetMaxConnectedClients()) + ") reached. Rejecting connection request from " + sIpAddress + ".");
 		clientConnection->handleCmd_notEnoughBandwidth();
 	}

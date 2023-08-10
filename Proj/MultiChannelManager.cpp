@@ -1,4 +1,4 @@
-///
+﻿///
 /// @class MultiChannelManager
 ///
 /// Created 08/21/2019
@@ -81,6 +81,6 @@ GetMedia(const boost::uuids::uuid& channelId, const std::string& channelName,
 		}
 	}
 
-	assert(false);
+	//assert(false);
 	return nullptr;
 }

@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -107,10 +107,10 @@ static char const* allowedCommandNames
 //	return nullptr;
 //}
 
-LiveRtspServer::LiveRtspServer(UsageEnvironment& env, int socket, Port rtspPort,
+LiveRtspServer::LiveRtspServer(UsageEnvironment& env, int ourSocketIPv4, int ourSocketIPv6, Port rtspPort,
 	UserAuthenticationDatabase* authDatabase,
 	IRateAdaptationFactory* rateFactory, IRateController* rateController) :
-	RTSPServer(env, socket, rtspPort, authDatabase, 45),
+	RTSPServer(env, ourSocketIPv4, ourSocketIPv6, rtspPort, authDatabase, 45),
 	m_checkClientSessionTask(nullptr),
 	m_maxConnectedClients(0),
 	m_rateFactory(rateFactory),
@@ -147,7 +147,8 @@ AddRtspMediaSession(const RtspChannel& channel)
 	const auto sSessionName = channel.ChannelName;
 
 	// Next, check whether we already have an RTSP "ServerMediaSession" for this media stream:
-	auto serverMediaSession = RTSPServer::lookupServerMediaSession(sSessionName.c_str());
+	auto serverMediaSession = getServerMediaSession(sSessionName.c_str());
+
 	const auto smsExists = serverMediaSession != nullptr;
 
 	if (!smsExists)
@@ -176,7 +177,7 @@ RemoveRtspMediaSession(const RtspChannel& channel)
 	endServerSession(channel.ChannelName);
 
 	// Check whether we already have a "ServerMediaSession" for this media stream:
-	const auto serverMediaSession = RTSPServer::lookupServerMediaSession(channel.ChannelName.c_str());
+	const auto serverMediaSession = getServerMediaSession(channel.ChannelName.c_str());
 
 	if (serverMediaSession != nullptr)
 	{
@@ -194,7 +195,7 @@ bool
 LiveRtspServer::
 DoesChannelExist(char const* streamName)
 {
-	const auto serverMediaSession = RTSPServer::lookupServerMediaSession(streamName);
+	const auto serverMediaSession = getServerMediaSession(streamName);
 	return serverMediaSession == nullptr ? false : true;
 }
 
@@ -203,7 +204,7 @@ LiveRtspServer::
 lookupServerMediaSession(char const* streamName)
 {
 	log_rtsp_debug("Looking up new ServerMediaSession: " + string(streamName) + ".");
-	return RTSPServer::lookupServerMediaSession(streamName);
+	return getServerMediaSession(streamName);
 }
 
 #define NEW_SMS(description) do {\
@@ -334,7 +335,7 @@ LiveRtspServer::
 endServerSession(const std::string& session)
 {
 	// Next, check whether we already have an RTSP "ServerMediaSession" for this media stream:
-	const auto serverMediaSession = RTSPServer::lookupServerMediaSession(session.c_str());
+	const auto serverMediaSession = getServerMediaSession(session.c_str());
 
 	if (serverMediaSession)
 	{
@@ -444,7 +445,7 @@ OnRtspDestroyChannel(UniqueChannelSessionIdentifier channelIdPair)
 
 RTSPServer::RTSPClientConnection*
 LiveRtspServer::
-createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr)
+createNewClientConnection(int clientSocket, struct sockaddr_storage const& clientAddr)
 {
 	return new LiveRtspClientConnection(*this, clientSocket, clientAddr);
 }

@@ -1,4 +1,4 @@
-/**********
+﻿/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -284,13 +284,13 @@ namespace CvRtsp
 		///
 		/// Overridden so that we can store the client connection info of connecting RTP clients
 		void getStreamParameters(uint32_t clientSessionId,
-			netAddressBits clientAddress,
+			struct sockaddr_storage const& clientAddress,
 			Port const& clientRTPPort,
 			Port const& clientRTCPPort,
 			int tcpSocketNum,
 			unsigned char rtpChannelId,
 			unsigned char rtcpChannelId,
-			netAddressBits& destinationAddress,
+			struct sockaddr_storage& destinationAddress,
 			u_int8_t& destinationTTL,
 			Boolean& isMulticast,
 			Port& serverRTPPort,
