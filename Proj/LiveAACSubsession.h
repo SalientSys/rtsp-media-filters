@@ -37,7 +37,7 @@ namespace CvRtsp
 	{
 	public:
 		LiveAACSubsession(UsageEnvironment& env, LiveRtspServer& rParent,
-			const boost::uuids::uuid& uiChannelId, unsigned uiSourceID,
+			const unsigned uiChannelId, unsigned uiSourceID,
 			const std::string& sSessionName,
 			const unsigned uiNumChannels, const unsigned uiBitsPerSample, const unsigned uiSamplingFrequency,
 			const std::string& sConfigStr,

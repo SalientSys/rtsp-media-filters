@@ -39,7 +39,7 @@ using namespace CvRtsp;
 class LiveMPEGVideoDeviceSource;
 
 LiveMPEGSubsession::LiveMPEGSubsession(UsageEnvironment& env, LiveRtspServer& rParent,
-    const boost::uuids::uuid& uiChannelId, unsigned int uiSourceId,
+    const unsigned uiChannelId, unsigned uiSourceId,
     const std::string& sSessionName,
     IRateAdaptationFactory* pFactory,
     IRateController* pGlobalRateControl, std::string configStr, int profileAndLevelIndication)

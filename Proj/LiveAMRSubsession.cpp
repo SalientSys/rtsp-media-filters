@@ -31,7 +31,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 using namespace CvRtsp;
 
 LiveAMRSubsession::LiveAMRSubsession(UsageEnvironment& env, LiveRtspServer& rParent,
-    const boost::uuids::uuid& uiChannelId, unsigned uniqueSessionID,
+    const unsigned uiChannelId, unsigned uniqueSessionID,
     const std::string& sSessionName,
     const unsigned uiNumChannels, const unsigned uiBitsPerSample, const unsigned uiSamplingFrequency,
     IRateAdaptationFactory* pFactory, IRateController* pGlobalRateControl)

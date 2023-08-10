@@ -1,4 +1,4 @@
-﻿/**********
+/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -26,14 +26,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #include <string>
 #include <vector>
-#include <functional>
-#include <boost/uuid/uuid.hpp>
 
 #ifndef _ON_DEMAND_SERVER_MEDIA_SUBSESSION_HH
 #include <live555/OnDemandServerMediaSubsession.hh>
 #endif
 #include "MediaSample.h"
-
+#include <functional>
 
 namespace CvRtsp
 {
@@ -49,13 +47,13 @@ namespace CvRtsp
 	using LiveDeviceSourceList = std::vector<LiveDeviceSource*>;
 
 	/// Channel id, source id, client id, IP address
-	using ClientJoinHandler = std::function<void(const boost::uuids::uuid&, uint32_t, uint32_t, std::string&)>;
+	using ClientJoinHandler = std::function<void(uint32_t, uint32_t, uint32_t, std::string&)>;
 
 	/// Channel id, source id, client id, channel index
-	using ClientUpdateHandler = std::function<void(const boost::uuids::uuid&, uint32_t, uint32_t, uint32_t)>;
+	using ClientUpdateHandler = std::function<void(uint32_t, uint32_t, uint32_t, uint32_t)>;
 
 	/// Channel id, source id, client id
-	using ClientLeaveHandler = std::function<void(const boost::uuids::uuid&, uint32_t, uint32_t)>;
+	using ClientLeaveHandler = std::function<void(uint32_t, uint32_t, uint32_t)>;
 #pragma endregion
 
 	/// 
@@ -72,20 +70,15 @@ namespace CvRtsp
 	{
 		friend class LiveDeviceSource;
 
-	private:
-		///
-		/// Helper function to cleanup before destroying this subsession.
-		void cleanup();
-
 	public:
 		/// Destructor
 		virtual ~LiveMediaSubsession();
 
 		///
-		/// Getter for source-id, video / audio source ?
+		/// Retrieve source id.
 		///
 		/// @return Source id.
-		inline uint32_t GetSourceId() const
+		uint32_t GetSourceId() const
 		{
 			return m_sourceId;
 		}
@@ -169,33 +162,6 @@ namespace CvRtsp
 			m_onLeave = onLeave;
 		}
 
-		///
-		/// Check if there are any device-sources using this subsession.
-		/// 
-		/// @return true if there is any active device-source, else false.
-		inline bool IsAnyActiveDeviceSourcePresent() const
-		{
-			return m_deviceSources.empty() == false;
-		}
-
-		///
-		/// Getter for if this subsession has served any video device-source with mediasample.
-		inline bool HasServedVideoDeviceSource() const
-		{
-			return m_hasServedAnyVideoDeviceSource;
-		}
-
-		///
-		/// Ends channel associated with this subsession.
-		void KillChannel();
-
-		///
-		/// Getter for whether this subsession has been processed to kill.
-		inline bool HasBeenProcessedToKill() const
-		{
-			return m_hasBeenProcessedToKill;
-		}
-
 	protected:
 		///
 		/// Register live device source with subsession.
@@ -226,7 +192,7 @@ namespace CvRtsp
 		/// @param[in] rateAdaptationFactory Factory used to create rate adaptation module.
 		/// @param[in] rateController Rate control to be used for subsession. This allows the subsession to
 		/// create different rate-control mechanisms based on the type of media subsession.
-		LiveMediaSubsession(UsageEnvironment& env, LiveRtspServer& liveParentRtspServer, const boost::uuids::uuid &channelId,
+		LiveMediaSubsession(UsageEnvironment& env, LiveRtspServer& liveParentRtspServer, uint32_t channelId,
 			uint32_t sourceId, const std::string& sessionName, bool isVideo, unsigned totalChannels = 1,
 			bool isSwitchableFormat = false, IRateAdaptationFactory* rateAdaptationFactory = nullptr,
 			IRateController* rateController = nullptr);
@@ -284,13 +250,13 @@ namespace CvRtsp
 		///
 		/// Overridden so that we can store the client connection info of connecting RTP clients
 		void getStreamParameters(uint32_t clientSessionId,
-			struct sockaddr_storage const& clientAddress,
+			netAddressBits clientAddress,
 			Port const& clientRTPPort,
 			Port const& clientRTCPPort,
 			int tcpSocketNum,
 			unsigned char rtpChannelId,
 			unsigned char rtcpChannelId,
-			struct sockaddr_storage& destinationAddress,
+			netAddressBits& destinationAddress,
 			u_int8_t& destinationTTL,
 			Boolean& isMulticast,
 			Port& serverRTPPort,
@@ -308,7 +274,7 @@ namespace CvRtsp
 		LiveRtspServer& m_rtspServer;
 
 		/// Unique channel Id: channels are assigned by the media web server
-		boost::uuids::uuid m_channelId;
+		uint32_t m_channelId;
 
 		/// Session ID that is used to register the media subsession with the scheduler
 		/// The channel ID is not sufficient since a single channel will have at least 
@@ -345,17 +311,5 @@ namespace CvRtsp
 
 		/// Callback for client leaves
 		ClientLeaveHandler m_onLeave;
-
-		/// Tracks if this subsession was serving any video device-source.
-		bool m_hasServedAnyVideoDeviceSource;
-
-		/// Has this been processed to kill already?
-		/// KE @TODO - this is a hack so that we dont break consistency. Not a big fan of this!
-		/// So need to update later.
-		/// Background on above: In LiveSourceTaskScheduler0::processMediaSubsessions(), it processes
-		/// faster than we can stop remote-session in our capture-server & call CvRtspServer::RemoveChannel().
-		/// We could do this from deleting this subsession from here, but the calls would be incosistent since we would 
-		/// be ending some sessions from here & some from there depending on situation, so this hack.
-		bool m_hasBeenProcessedToKill;
 	};
 }

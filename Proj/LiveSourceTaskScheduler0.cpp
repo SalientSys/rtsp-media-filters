@@ -1,4 +1,4 @@
-﻿/**********
+/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -23,9 +23,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ///
 #include "pch.h"
 
-#include <tbb/parallel_for_each.h>
-#include <boost/uuid/uuid_io.hpp>
-
 #include <rtsp-logger/RtspServerLogging.h>
 
 #include "LiveSourceTaskScheduler0.h"
@@ -37,10 +34,10 @@ using namespace CvRtsp;
 LiveSourceTaskScheduler0::
 LiveSourceTaskScheduler0(ChannelManager& channelManager)
 	: BasicTaskScheduler(m_maxDelayTimeMicroSec),
+	/*m_exitEvent(::CreateEventA(nullptr, TRUE, FALSE, nullptr)),*/
 	m_channelManager(channelManager),
 	m_samplesReceived(0),
-	m_hasRun(false),
-	m_count(0)
+	m_hasRun(false)
 {
 
 }
@@ -80,70 +77,62 @@ doEventLoop(char volatile* watchVariable)
 		}
 		log_rtsp_debug("Calling processLiveSources.");
 		processLiveSources();
-		processMediaSubsessions();
 
 		log_rtsp_debug("Done processLiveSources, calling SingleStep.");
-
+		// run once
+		//if (m_hasRun)
+		//{
+		//	std::this_thread::sleep_for(std::chrono::seconds(60));
+		//	continue;
+		//}
 		SingleStep(m_maxDelayTimeMicroSec);
 
 		log_rtsp_debug("Done SingleStep.");
 	}
 }
 
-
 void
 LiveSourceTaskScheduler0::
-RegisterMediaSubsession(const boost::uuids::uuid& channelId, const std::string& channelName,
-	uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
+AddMediaSubsession(uint32_t channelId, uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
 {
 	{
 		std::stringstream ss;
-		ss << "Registering media subsession with task-scheduler -"
-			<< " Channel Id: " << channelId
-			<< " Channel Name: " << channelName
-			<< " Source Id: " << sourceId;
+		ss << "LiveSourceTaskScheduler0::AddMediaSubsession: " << channelId << " source: " << sourceId;
 		log_rtsp_debug(ss.str());
 	}
 
-	// already exist?
-	const auto sessionMapIterator = m_mediaSubSessionsMap.find(std::make_pair(channelId, channelName));
-	if (sessionMapIterator == m_mediaSubSessionsMap.end())
+	const auto sessionMapIterator = m_mediaSubSessions.find(std::make_pair(channelId, sourceId));
+	//auto mediaSessionMapIterator = m_mediaSessions.find(channelId);
+	if (sessionMapIterator == m_mediaSubSessions.end())
 	{
-		// add media subsession
-		m_mediaSubSessionsMap.emplace(std::make_pair(channelId, channelName), mediaSubsession);
+		// Need to add session.
+		m_mediaSubSessions.emplace(std::make_pair(channelId, sourceId), mediaSubsession);
 	}
 }
 
 void
 LiveSourceTaskScheduler0::
-DeRegisterMediaSubsession(const boost::uuids::uuid& channelId, const std::string& channelName,
-	uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
+RemoveMediaSubsession(uint32_t  channelId, uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
 {
 	{
 		std::stringstream ss;
-		ss << "De-registering media subsession from task-scheduler -"
-			<< " Channel Id: " << channelId
-			<< " Channel Name: " << channelName
-			<< " Source Id: " << sourceId;
+		ss << "Trying to remove media subsession with channel: " << channelId << " source: " << sourceId;
 		log_rtsp_debug(ss.str());
 	}
 
-	// exist?
-	const auto sessionMapIterator = m_mediaSubSessionsMap.find(std::make_pair(channelId, channelName));
-	if (sessionMapIterator != cend(m_mediaSubSessionsMap))
+	const auto sessionMapIterator = m_mediaSubSessions.find(std::make_pair(channelId, sourceId));
+	if (sessionMapIterator != cend(m_mediaSubSessions))
 	{
-		// remove media subsession
-		m_mediaSubSessionsMap.erase(std::make_pair(channelId, channelName));
+		m_mediaSubSessions.erase(std::make_pair(channelId, sourceId));
 	}
 }
 
 LiveMediaSubsession*
 LiveSourceTaskScheduler0::
-GetMediaSubsession(const boost::uuids::uuid& channelId,
-	const std::string& channelName, uint32_t sourceId)
+GetMediaSubsession(uint32_t channelId, uint32_t sourceId)
 {
-	auto mediaSubSession = m_mediaSubSessionsMap.find(std::make_pair(channelId, channelName));
-	if (mediaSubSession != m_mediaSubSessionsMap.end())
+	auto mediaSubSession = m_mediaSubSessions.find(std::make_pair(channelId, sourceId));
+	if (mediaSubSession != m_mediaSubSessions.end())
 	{
 		return mediaSubSession->second;
 	}
@@ -156,6 +145,7 @@ processLiveSources()
 {
 	log_rtsp_debug("Processing live sources.");
 
+	uint32_t sessionCount = 0;
 	uint32_t sampleCount = 0;
 	auto exit = false;
 
@@ -165,62 +155,28 @@ processLiveSources()
 	// i.e. some sessions may never be reached if the for always starts at begin and exits when 
 	// MaxSamplesToBeProcessedInEventLoop is reached. For the purpose of the single
 	// live media session this should suffice
-	tbb::parallel_for_each (m_mediaSubSessionsMap.cbegin(), m_mediaSubSessionsMap.cend(), [&](auto mediaSubSessionPair)
+	while (sessionCount < MaxRevolutions)
+	{
+		for (auto mediaSubSession : m_mediaSubSessions)
 		{
-			auto sampleCount = 0;
-			while (sampleCount < 30)
+			sampleCount = 0;
+			while (sampleCount < 15)
 			{
-				auto mediaSample = m_channelManager.GetMedia(mediaSubSessionPair.first.first,
-					mediaSubSessionPair.first.second, mediaSubSessionPair.second->GetSourceId());
-
+				auto mediaSample = m_channelManager.GetMedia(mediaSubSession.first.first,
+					mediaSubSession.first.second);
 				if (mediaSample == nullptr)
 				{
 					break;
 				}
-
-				// make sure channel-id, channel-name and source-id are set
-				mediaSample->SetChannelId(mediaSubSessionPair.first.first);
-				mediaSample->SetChannelName(mediaSubSessionPair.first.second);
-				mediaSample->SetSourceId(mediaSubSessionPair.second->GetSourceId());
-
-				mediaSubSessionPair.second->AddMediaSample(mediaSample);
+				// make sure channel and source ids are set
+				mediaSample->SetChannelId(mediaSubSession.first.first);
+				mediaSample->SetSourceId(mediaSubSession.first.second);
+				mediaSubSession.second->AddMediaSample(mediaSample);
 
 				++sampleCount;
 			}
-		});
-}
-
-void 
-LiveSourceTaskScheduler0::
-processMediaSubsessions()
-{
-	if (!m_mediaSubSessionsMap.empty())
-	{
-		// UniqueChannelSessionIdentifier, LiveMediaSubsession*
-		tbb::parallel_for_each (m_mediaSubSessionsMap.begin(), m_mediaSubSessionsMap.end(), [&](LiveMediaSession mediaSubsessionIt)
-			{
-				LiveMediaSubsession* subsession = mediaSubsessionIt.second;
-				if (m_count % 30 == 0)
-				{
-					m_count = 0;
-
-					if (!subsession->IsAnyActiveDeviceSourcePresent()
-						&& subsession->HasServedVideoDeviceSource()
-						&& !subsession->HasBeenProcessedToKill())
-					{
-						// kill the channel(remote rtsp-session in camera-server for this associated subsession)
-						subsession->KillChannel();
-					}
-				}
-				else
-					m_count++;
-
-				// if there was only one obj in map & we just deleted it?
-				if (m_mediaSubSessionsMap.empty())
-				{
-					return; // exit here
-				}
-			});
+		}
+		++sessionCount;
 	}
 }
 
@@ -230,7 +186,7 @@ ProcessLiveMediaSessions()
 {
 	log_rtsp_debug("LiveSourceTaskScheduler0::ProcessLiveMediaSessions()");
 
-	for (const auto& mediaSession : m_mediaSubSessionsMap)
+	for (const auto& mediaSession : m_mediaSubSessions)
 	{
 		mediaSession.second->ProcessClientStatistics();
 	}
@@ -240,14 +196,34 @@ void
 LiveSourceTaskScheduler0::
 OnMediaReceived(std::vector<std::shared_ptr<MediaSample>> mediaSamples, CvRtsp::LiveMediaSubsession* liveMediaSubsession)
 {
+	//std::cout << "Media Received. Channel Id: " << mediaSample->GetChannelId() << ", Source Id: " << mediaSample->GetSourceId() << std::endl;
 	if (liveMediaSubsession)
 	{
 		for (auto mediaSample : mediaSamples)
 		{
+			//std::cout << "Media Received. Channel Id: " << mediaSample->GetChannelId() << ", Source Id: " << mediaSample->GetSourceId() << std::endl;
 			liveMediaSubsession->AddMediaSample(mediaSample);
 		}
 	}
-
+	//std::cout << "Single Step" << std::endl;
 	SingleStep(m_maxDelayTimeMicroSec);
 	m_hasRun = true;
+
+	//auto mediaSubSession = m_mediaSubSessions.find(std::make_pair(mediaSample->GetChannelId(), mediaSample->GetSourceId()));
+	//if (mediaSubSession != m_mediaSubSessions.end())
+	//{
+	//	mediaSubSession->second->AddMediaSample(mediaSample);
+	//	//std::cout << "Send Sample" << std::endl;
+	//}
+	//if (m_samplesReceived > MaxRevolutions)
+	//{
+	//	std::cout << "Single Step" << std::endl;
+	//	SingleStep(m_maxDelayTimeMicroSec);
+	//	m_hasRun = true;
+	//	m_samplesReceived = 0;
+	//}
+	//else
+	//{
+	//	++m_samplesReceived;
+	//}
 }

@@ -41,8 +41,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include <string>
-#include <boost/uuid/uuid.hpp>
-
 #include "Buffer.h"
 
 namespace CvRtsp
@@ -78,7 +76,7 @@ namespace CvRtsp
 		///
 		/// @return Media sample.
 		static std::shared_ptr<MediaSample> CreateMediaSample(BYTE* data, int size, double startTime,
-			bool isKeyFrame = false, const std::string& channelName = std::string(), uint32_t sourceId = 0, bool isSyncPoint = false);
+			bool isKeyFrame = false, uint32_t channelId = 0, uint32_t sourceId = 0, bool isSyncPoint = false);
 
 		/// 
 		/// Data buffer contained in this media sample.
@@ -125,26 +123,10 @@ namespace CvRtsp
 			m_marker = isMarker;
 		}
 
-		/// Get channel name.
-		///
-		/// @return Channel name.
-		std::string GetChannelName() const
-		{
-			return m_channelName;
-		}
-
-		/// Set channel name.
-		///
-		/// @param[in] channelName Channel name.
-		void SetChannelName(const std::string& channelName)
-		{
-			m_channelName = channelName;
-		}
-
 		/// Get channel id.
 		///
 		/// @return Channel id.
-		boost::uuids::uuid GetChannelId() const
+		uint32_t GetChannelId() const
 		{
 			return m_channelId;
 		}
@@ -152,7 +134,7 @@ namespace CvRtsp
 		/// Set channel id.
 		///
 		/// @param[in] channelId Channel id.
-		void SetChannelId(const boost::uuids::uuid &channelId)
+		void SetChannelId(uint32_t channelId)
 		{
 			m_channelId = channelId;
 		}
@@ -197,7 +179,7 @@ namespace CvRtsp
 		MediaSample() :
 			m_startTimeMs(0.0),
 			m_marker(false),
-			m_channelName(std::move(std::string())),
+			m_channelId(0),
 			m_sourceId(0),
 			m_isKeyFrame(false)
 		{
@@ -213,7 +195,7 @@ namespace CvRtsp
 		/// @param[in] channelId	Channel id.
 		/// @param[in] sourceId		Source id.
 		/// @param[in] isSyncPoint	True if this is a marker.
-		MediaSample(BYTE* data, int size, double startTimeMs, bool isKeyFrame, std::string channelName, uint32_t sourceId, bool isSyncPoint);
+		MediaSample(BYTE* data, int size, double startTimeMs, bool isKeyFrame, uint32_t channelId, uint32_t sourceId, bool isSyncPoint);
 
 		/// Media data byte stream.
 		Buffer m_data;
@@ -224,17 +206,14 @@ namespace CvRtsp
 		/// End of sample marker.
 		bool m_marker;
 
-		/// Channel name.
-		std::string m_channelName;
+		/// Channel id
+		uint32_t m_channelId;
 
-		/// Source id (video/audio source).
+		/// Source id
 		uint32_t m_sourceId;
 
 		/// Is this key-frame ?
 		bool m_isKeyFrame;
-
-		/// Channel Id.
-		boost::uuids::uuid m_channelId;
 
 	};
 }

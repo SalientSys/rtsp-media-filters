@@ -20,7 +20,5 @@
 
 #include "CommonRtsp.h"
 
-#define DEBUG
-
 
 #endif //PCH_H

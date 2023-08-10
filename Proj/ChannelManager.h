@@ -25,7 +25,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #pragma once
 
 #include <cstdint>
-#include <boost/uuid/uuid.hpp>
 
 #include "MediaSample.h"
 
@@ -45,11 +44,10 @@ namespace CvRtsp
 		/// The implementation must return a media sample if the channel has received a media sample
 		/// of the specified channel and source id.
 		///
-		/// @param[in] channelId	Unique Channel id.
-		/// @param[in] sourceId		Source id.
+		/// @param[in] channelId Channel id.
+		/// @param[in] sourceId Source id.
 		///
 		/// @return Media sample, nullptr if not found.
-		virtual std::shared_ptr<MediaSample> GetMedia(const boost::uuids::uuid &channelId, 
-			const std::string& channelName, uint32_t sourceId) = 0;
+		virtual std::shared_ptr<MediaSample> GetMedia(uint32_t channelId, uint32_t sourceId) = 0;
 	};
 }

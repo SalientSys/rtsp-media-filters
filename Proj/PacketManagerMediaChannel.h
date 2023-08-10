@@ -25,8 +25,6 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #pragma once
 
 #include <tbb/concurrent_queue.h>
-#include <boost/uuid/uuid.hpp>
-
 #include "MediaChannel.h"
 
 namespace CvRtsp
@@ -41,7 +39,7 @@ namespace CvRtsp
 	public:
 		///
 		/// Constructor
-		PacketManagerMediaChannel(const boost::uuids::uuid& channelId, const std::string &channelName);
+		PacketManagerMediaChannel(uint32_t channelId);
 
 		///
 		/// This method returns a video media sample if available.
@@ -68,11 +66,11 @@ namespace CvRtsp
 		///
 		/// The subclass must implement delivery of video media samples to the media sink.
 		///
-		/// @param[in] channelId		Unique channel id.
-		/// @param[in] mediaSamples		Media samples to send.
+		/// @param[in] channelId Channel id.
+		/// @param[in] mediaSamples Media samples to send.
 		///
 		/// @return True if sample sent.
-		bool deliverVideo(const boost::uuids::uuid& channelId, const std::string &channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
+		bool deliverVideo(uint32_t channelId, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
 
 		///
 		/// The subclass must implement delivery of audio media samples to the media sink.
@@ -81,6 +79,6 @@ namespace CvRtsp
 		/// @param[in] mediaSamples Media samples to send.
 		///
 		/// @return True if sample sent.
-		bool deliverAudio(const boost::uuids::uuid& channelId, const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
+		bool deliverAudio(uint32_t channelId, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
 	};
 }

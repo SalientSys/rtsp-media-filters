@@ -1,4 +1,4 @@
-﻿/**********
+/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -64,7 +64,7 @@ LiveDeviceSource(UsageEnvironment& env, unsigned clientId, LiveMediaSubsession* 
 	m_rateControl(rateControl),
 	m_lastPacketNumReceived(0)
 {
-	m_parentSubsession->addDeviceSource(this); // register with the subsession.
+	m_parentSubsession->addDeviceSource(this);
 	if (m_rateAdaptationFactory)
 	{
 		m_rateAdaptation = m_rateAdaptationFactory->getInstance();
@@ -74,11 +74,7 @@ LiveDeviceSource(UsageEnvironment& env, unsigned clientId, LiveMediaSubsession* 
 LiveDeviceSource::
 ~LiveDeviceSource()
 {
-	if (!m_mediaSampleQueue.empty())
-	{
-		m_mediaSampleQueue.clear();
-	}
-	m_parentSubsession->removeDeviceSource(this); // un-register with the subsession.
+	m_parentSubsession->removeDeviceSource(this);
 	if (m_frameGrabber)
 	{
 		delete m_frameGrabber;

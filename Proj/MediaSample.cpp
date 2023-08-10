@@ -45,10 +45,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using namespace CvRtsp;
 
 MediaSample
-::MediaSample(BYTE* data, int size, double startTime, bool isKeyFrame, std::string channelName, uint32_t sourceId, bool isSyncPoint) :
+::MediaSample(BYTE* data, int size, double startTime, bool isKeyFrame, uint32_t channelId, uint32_t sourceId, bool isSyncPoint) :
 	m_startTimeMs(startTime),
 	m_marker(isSyncPoint),
-	m_channelName(channelName),
+	m_channelId(channelId),
 	m_sourceId(sourceId),
 	m_isKeyFrame(isKeyFrame)
 {
@@ -60,7 +60,7 @@ MediaSample
 {
 	m_startTimeMs = mediaSample.m_startTimeMs;
 	m_marker = mediaSample.m_marker;
-	m_channelName = mediaSample.m_channelName;
+	m_channelId = mediaSample.m_channelId;
 	m_sourceId = mediaSample.m_sourceId;
 	m_isKeyFrame = mediaSample.m_isKeyFrame;
 	m_data.SetData(mediaSample.GetDataBuffer().Data(), mediaSample.GetSize());
@@ -68,7 +68,7 @@ MediaSample
 
 std::shared_ptr<MediaSample>
 MediaSample::
-CreateMediaSample(BYTE* data, int size, double startTime, bool isKeyFrame, const std::string& channelName, uint32_t sourceId, bool isSyncPoint)
+CreateMediaSample(BYTE* data, int size, double startTime, bool isKeyFrame, uint32_t channelId, uint32_t sourceId, bool isSyncPoint)
 {
-	return std::make_shared<MediaSample>(MediaSample(data, size, startTime, isKeyFrame, channelName, sourceId, isSyncPoint));
+	return std::make_shared<MediaSample>(MediaSample(data, size, startTime, isKeyFrame, channelId, sourceId, isSyncPoint));
 }

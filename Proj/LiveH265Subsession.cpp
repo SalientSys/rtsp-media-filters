@@ -38,7 +38,7 @@ using namespace CvRtsp;
 
 LiveH265Subsession::
 LiveH265Subsession(UsageEnvironment& env, LiveRtspServer& rParent,
-    const boost::uuids::uuid& uiChannelId, unsigned uiSourceId,
+    const unsigned uiChannelId, unsigned uiSourceId,
     const std::string& sSessionName,
     const std::string& sVps, const std::string& sSps, const std::string& sPps,
     IRateAdaptationFactory* pFactory,

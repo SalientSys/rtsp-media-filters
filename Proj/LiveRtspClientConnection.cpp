@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 #include "LiveRtspClientSession.h"
 #include <iostream>
@@ -12,7 +12,7 @@ using namespace boost::algorithm;
 
 
 LiveRtspClientConnection::
-LiveRtspClientConnection(LiveRtspServer& ourServer, int clientSocket, struct sockaddr_storage const& clientAddr) :
+LiveRtspClientConnection(LiveRtspServer& ourServer, int clientSocket, struct sockaddr_in clientAddr) :
 	RTSPServer::RTSPClientConnection(ourServer, clientSocket, clientAddr),
 	m_rtspParentServer(&ourServer)
 {

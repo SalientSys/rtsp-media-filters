@@ -1,4 +1,4 @@
-﻿/**********
+/**********
 This library is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License as published by the
 Free Software Foundation; either version 2.1 of the License, or (at your
@@ -107,10 +107,10 @@ static char const* allowedCommandNames
 //	return nullptr;
 //}
 
-LiveRtspServer::LiveRtspServer(UsageEnvironment& env, int ourSocketIPv4, int ourSocketIPv6, Port rtspPort,
+LiveRtspServer::LiveRtspServer(UsageEnvironment& env, int socket, Port rtspPort,
 	UserAuthenticationDatabase* authDatabase,
 	IRateAdaptationFactory* rateFactory, IRateController* rateController) :
-	RTSPServer(env, ourSocketIPv4, ourSocketIPv6, rtspPort, authDatabase, 45),
+	RTSPServer(env, socket, rtspPort, authDatabase, 45),
 	m_checkClientSessionTask(nullptr),
 	m_maxConnectedClients(0),
 	m_rateFactory(rateFactory),
@@ -147,20 +147,18 @@ AddRtspMediaSession(const RtspChannel& channel)
 	const auto sSessionName = channel.ChannelName;
 
 	// Next, check whether we already have an RTSP "ServerMediaSession" for this media stream:
-	auto serverMediaSession = getServerMediaSession(sSessionName.c_str());
-
+	auto serverMediaSession = RTSPServer::lookupServerMediaSession(sSessionName.c_str());
 	const auto smsExists = serverMediaSession != nullptr;
 
 	if (!smsExists)
 	{
 		log_rtsp_debug("Creating Session " + sSessionName + " on RTSP server.");
-		
 		// Create a new "ServerMediaSession" object for streaming from the named file.
 		serverMediaSession = createNewSMS(envir(), *this, channel, m_rateFactory, m_rateController);
 
 		log_rtsp_debug("Adding ServerMediaSession " + sSessionName + ".");
-
 		addServerMediaSession(serverMediaSession);
+
 		announceStream(this, serverMediaSession, sSessionName.c_str());
 	}
 	else
@@ -177,7 +175,7 @@ RemoveRtspMediaSession(const RtspChannel& channel)
 	endServerSession(channel.ChannelName);
 
 	// Check whether we already have a "ServerMediaSession" for this media stream:
-	const auto serverMediaSession = getServerMediaSession(channel.ChannelName.c_str());
+	const auto serverMediaSession = RTSPServer::lookupServerMediaSession(channel.ChannelName.c_str());
 
 	if (serverMediaSession != nullptr)
 	{
@@ -195,7 +193,7 @@ bool
 LiveRtspServer::
 DoesChannelExist(char const* streamName)
 {
-	const auto serverMediaSession = getServerMediaSession(streamName);
+	const auto serverMediaSession = RTSPServer::lookupServerMediaSession(streamName);
 	return serverMediaSession == nullptr ? false : true;
 }
 
@@ -204,7 +202,7 @@ LiveRtspServer::
 lookupServerMediaSession(char const* streamName)
 {
 	log_rtsp_debug("Looking up new ServerMediaSession: " + string(streamName) + ".");
-	return getServerMediaSession(streamName);
+	return RTSPServer::lookupServerMediaSession(streamName);
 }
 
 #define NEW_SMS(description) do {\
@@ -217,7 +215,6 @@ static ServerMediaSession* createNewSMS(UsageEnvironment& env, LiveRtspServer& r
 	IRateAdaptationFactory* pFactory, IRateController* pGlobalRateControl)
 {
 	log_rtsp_debug("createNewSMS: " + channel.ChannelName + ".");
-
 	auto sms = ServerMediaSession::createNew(env, channel.ChannelName.c_str(), channel.ChannelName.c_str(),
 		"Session streamed by \"SSP\"", False/*SSM*/);
 
@@ -234,7 +231,7 @@ static ServerMediaSession* createNewSMS(UsageEnvironment& env, LiveRtspServer& r
 		// if there is a video channel, the audio source id increases!
 		audioId = 1;
 		auto liveMediaSubsession = LiveMediaSubsessionFactory::createVideoSubsession(
-			env, rtspServer, channel, videoId, channel.VideoDescriptor,
+			env, rtspServer, channel.ChannelName, channel.ChannelId, videoId, channel.VideoDescriptor,
 			pFactory, pGlobalRateControl);
 		if (liveMediaSubsession == nullptr)
 		{
@@ -244,8 +241,8 @@ static ServerMediaSession* createNewSMS(UsageEnvironment& env, LiveRtspServer& r
 		}
 
 		log_rtsp_debug("Added " + channel.ChannelName + " to video ServerMediaSession.");
-
 		sms->addSubsession(liveMediaSubsession);
+
 		liveMediaSubsession->SetClientJoinHandler(std::bind(&LiveRtspServer::OnClientJoin, &rtspServer,
 			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 		liveMediaSubsession->SetClientUpdateHandler(std::bind(&LiveRtspServer::OnClientUpdate, &rtspServer,
@@ -335,7 +332,7 @@ LiveRtspServer::
 endServerSession(const std::string& session)
 {
 	// Next, check whether we already have an RTSP "ServerMediaSession" for this media stream:
-	const auto serverMediaSession = getServerMediaSession(session.c_str());
+	const auto serverMediaSession = RTSPServer::lookupServerMediaSession(session.c_str());
 
 	if (serverMediaSession)
 	{
@@ -389,63 +386,31 @@ onRtspClientSessionPlay(uint32_t clientSessionId)
 
 void
 LiveRtspServer::
-OnClientJoin(const boost::uuids::uuid& channelId, uint32_t sourceId,
-	uint32_t clientId, const std::string& ipAddress)
+OnClientJoin(uint32_t channelId, uint32_t sourceId, uint32_t clientId, std::string& ipAddress)
 {
-	std::stringstream ss;
-	ss << "Client joined Rtsp Channel -"
-		<< " Channel Id: " << channelId
-		<< " Source Id: " << sourceId
-		<< " Client id: " << clientId
-		<< " IP: " << ipAddress;
-
-	log_rtsp_information(ss.str());
+	log_rtsp_information("Client joined: RtspChannel: " + std::to_string(channelId) + ":"
+		+ std::to_string(sourceId) + " client ID: " + std::to_string(clientId) + " IP: " + ipAddress + ".");
 }
 
 void
 LiveRtspServer::
-OnClientUpdate(const boost::uuids::uuid& channelId, uint32_t sourceId,
-	uint32_t clientId, uint32_t channelIndex)
+OnClientUpdate(uint32_t channelId, uint32_t sourceId, uint32_t clientId, uint32_t channelIndex)
 {
-	std::stringstream ss;
-	ss << "Client joined Rtsp Channel -"
-		<< " Channel Id: " << channelId
-		<< " Source Id: " << sourceId
-		<< " Client Id: " << clientId
-		<< " Camera Id: " << channelIndex;
-
-	log_rtsp_information(ss.str());
+	log_rtsp_information("Client joined: RtspChannel: " + std::to_string(channelId) + ":"
+		+ std::to_string(sourceId) + " client ID: " + std::to_string(clientId) + " RtspChannel index: " + std::to_string(channelIndex) + ".");
 }
 
 void
 LiveRtspServer::
-OnClientLeave(const boost::uuids::uuid& channelId, uint32_t sourceId,
-	uint32_t clientId)
+OnClientLeave(uint32_t channelId, uint32_t sourceId, uint32_t clientId)
 {
-	std::stringstream ss;
-	ss << "Client left Rtsp Channel -"
-		<< " Channel Id: " << channelId
-		<< " Source Id: " << sourceId
-		<< " Client Id: " << clientId;
-
-	log_rtsp_information(ss.str());
+	log_rtsp_information("Client left: RtspChannel: " + std::to_string(channelId) + ":"
+		+ std::to_string(sourceId) + " client ID: " + std::to_string(clientId) + ".");
 }
-
-
-void
-LiveRtspServer::
-OnRtspDestroyChannel(UniqueChannelSessionIdentifier channelIdPair)
-{
-	if (m_onDestroyChannel)
-	{
-		m_onDestroyChannel(channelIdPair);
-	}
-}
-
 
 RTSPServer::RTSPClientConnection*
 LiveRtspServer::
-createNewClientConnection(int clientSocket, struct sockaddr_storage const& clientAddr)
+createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr)
 {
 	return new LiveRtspClientConnection(*this, clientSocket, clientAddr);
 }
