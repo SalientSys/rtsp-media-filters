@@ -22,6 +22,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ///
 
 #pragma once
+#include <boost/uuid/uuid.hpp>
 
 #include "LiveMediaSubsession.h"
 
@@ -38,7 +39,7 @@ namespace CvRtsp
 		///
 		/// @param[in] env						Usage environment.
 		/// @param[in] rParent					Parent Rtsp server.
-		/// @param[in] uiChannelId			    Channel id
+		/// @param[in] uiChannelId			    Unique channel id
 		/// @param[in] uiSourceId				Source id.
 		/// @param[in] sSessionName				Session name.
 		/// @param[in] sps						Sequence parameter set.
@@ -48,7 +49,7 @@ namespace CvRtsp
 		///
 		/// @return Live video device source.
 		LiveH264Subsession(UsageEnvironment& env, LiveRtspServer& rParent,
-			const unsigned uiChannelId, unsigned uiSourceId,
+			const boost::uuids::uuid &uiChannelId, unsigned int uiSourceId,
 			const std::string& sSessionName,
 			const std::string& sSps, const std::string& sPps,
 			IRateAdaptationFactory* pFactory,

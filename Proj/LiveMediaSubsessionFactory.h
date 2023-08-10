@@ -24,6 +24,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #pragma once
 
 #include <sstream>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <rtsp-logger/RtspServerLogging.h>
 
@@ -59,10 +60,12 @@ namespace CvRtsp
 		/// @param[in] rateAdaptationFactory Rate adaptation factory.
 		/// @param[in] rateController Rate controller.
 		static LiveMediaSubsession* createVideoSubsession(UsageEnvironment& env, LiveRtspServer& rtspServer,
-			const std::string& sessionName, uint32_t channelId, unsigned subsessionId,
+			const RtspChannel &rtspChannel, unsigned int subsessionId,
 			const VideoChannelDescriptor& videoDescriptor, IRateAdaptationFactory* rateAdaptationFactory,
 			IRateController* rateController)
 		{
+			const std::string sessionName = rtspChannel.ChannelName;
+			const boost::uuids::uuid channelId = rtspChannel.ChannelId;
 			{
 				std::stringstream message;
 				message << "Creating new LiveMediaSubsession " << sessionName << " Channel Id: " << channelId
@@ -120,7 +123,7 @@ namespace CvRtsp
 		/// @param[in] rateAdaptationFactory Rate adaptation factory.
 		/// @param[in] rateController Rate controller.
 		static LiveMediaSubsession* createAudioSubsession(UsageEnvironment& env, LiveRtspServer& rtspServer,
-			const std::string& sessionName, const unsigned channelId, unsigned subsessionId,
+			const std::string& sessionName, const boost::uuids::uuid& channelId, unsigned subsessionId,
 			const AudioChannelDescriptor& audioDescriptor, IRateAdaptationFactory* rateAdaptationFactory,
 			IRateController* rateController)
 		{
@@ -130,6 +133,7 @@ namespace CvRtsp
 					<< " Subsession Id: " << subsessionId;
 				log_rtsp_debug(message.str());
 			}
+
 			LiveMediaSubsession* pMediaSubsession = nullptr;
 			if (audioDescriptor.Codec == MediaSubType::AMR)
 			{

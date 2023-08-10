@@ -24,6 +24,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ///
 #pragma once
 #include <climits>
+#include <boost/uuid/uuid.hpp>
+
 #include "ChannelManager.h"
 #include "PacketManagerMediaChannel.h"
 
@@ -39,10 +41,11 @@ namespace CvRtsp
 
 		/// Constructor
 		///
-		/// @param[in]	channelId	Channel id.
-		SingleChannelManager(uint32_t channelId) :
-			m_packetManager(channelId),
+		/// @param[in]	channelId	Unique channel id.
+		SingleChannelManager(const boost::uuids::uuid& channelId, const std::string& channelName) :
+			m_packetManager(channelId, channelName),
 			m_channelId(channelId),
+			m_channelName(channelName),
 			m_videoSourceId(UINT_MAX),
 			m_audioSourceId(UINT_MAX)
 		{
@@ -50,12 +53,14 @@ namespace CvRtsp
 
 		/// Constructor
 		///
-		/// @param[in] channelId		Channel id.
+		/// @param[in] channelId		Unique channel id.
 		/// @param[in] videoSourceId	Video source id.
 		/// @param[in] audioSourceId	Audio source id.
-		SingleChannelManager(uint32_t channelId, uint32_t videoSourceId, uint32_t audioSourceId) :
-			m_packetManager(channelId),
+		SingleChannelManager(const boost::uuids::uuid& channelId, const std::string& channelName, 
+			uint32_t videoSourceId, uint32_t audioSourceId) :
+			m_packetManager(channelId, channelName),
 			m_channelId(channelId),
+			m_channelName(channelName),
 			m_videoSourceId(videoSourceId),
 			m_audioSourceId(audioSourceId)
 		{
@@ -102,11 +107,11 @@ namespace CvRtsp
 		///
 		/// Get media.
 		///
-		/// @param[in]	channelId	Channel id.
+		/// @param[in]	channelId	Unique channel id.
 		/// @param[in]	sourceId	Source id.
 		///
 		/// @return Media sample from the packet manager.
-		std::shared_ptr<MediaSample> GetMedia(uint32_t channelId, uint32_t sourceId) override
+		std::shared_ptr<MediaSample> GetMedia(const boost::uuids::uuid& channelId, uint32_t sourceId) override
 		{
 			assert(channelId == m_channelId);
 			if (sourceId == m_videoSourceId)
@@ -126,8 +131,11 @@ namespace CvRtsp
 		/// Packet manager.
 		PacketManagerMediaChannel m_packetManager;
 
-		/// Channel id.
-		uint32_t m_channelId;
+		/// Unique channel id.
+		boost::uuids::uuid m_channelId;
+
+		/// Channel name.
+		std::string m_channelName;
 
 		/// Video source id.
 		uint32_t m_videoSourceId;

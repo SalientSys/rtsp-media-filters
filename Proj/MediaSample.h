@@ -41,6 +41,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include <string>
+#include <boost/uuid/uuid.hpp>
+
 #include "Buffer.h"
 
 namespace CvRtsp
@@ -123,20 +125,36 @@ namespace CvRtsp
 			m_marker = isMarker;
 		}
 
-		/// Get channel id.
+		/// Get channel name.
 		///
-		/// @return Channel id.
+		/// @return Channel name.
 		std::string GetChannelName() const
 		{
 			return m_channelName;
 		}
 
-		/// Set channel id.
+		/// Set channel name.
 		///
-		/// @param[in] channelId Channel id.
+		/// @param[in] channelName Channel name.
 		void SetChannelName(const std::string& channelName)
 		{
 			m_channelName = channelName;
+		}
+
+		/// Get channel id.
+		///
+		/// @return Channel id.
+		boost::uuids::uuid GetChannelId() const
+		{
+			return m_channelId;
+		}
+
+		/// Set channel id.
+		///
+		/// @param[in] channelId Channel id.
+		void SetChannelId(const boost::uuids::uuid &channelId)
+		{
+			m_channelId = channelId;
 		}
 
 		/// Get source id.
@@ -206,14 +224,17 @@ namespace CvRtsp
 		/// End of sample marker.
 		bool m_marker;
 
-		/// Channel id
+		/// Channel name.
 		std::string m_channelName;
 
-		/// Source id
+		/// Source id (video/audio source).
 		uint32_t m_sourceId;
 
 		/// Is this key-frame ?
 		bool m_isKeyFrame;
+
+		/// Channel Id.
+		boost::uuids::uuid m_channelId;
 
 	};
 }

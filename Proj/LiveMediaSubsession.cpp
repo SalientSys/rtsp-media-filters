@@ -23,9 +23,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 ///
 #include "pch.h"
 
-#include "LiveMediaSubsession.h"
 #include <cassert>
 #include <live555/liveMedia.hh>
+
+#include "LiveMediaSubsession.h"
 #include "LiveAMRAudioDeviceSource.h"
 #include "LiveDeviceSource.h"
 #include "LiveSourceTaskScheduler.h"
@@ -42,7 +43,7 @@ using namespace CvRtsp;
 
 LiveMediaSubsession::
 LiveMediaSubsession(UsageEnvironment& env, LiveRtspServer& parent,
-	const unsigned channelId, unsigned sourceId, const std::string& sessionName,
+	const boost::uuids::uuid& channelId, uint32_t sourceId, const std::string& sessionName,
 	bool isVideo, const unsigned totalChannels, bool isSwitchableFormat,
 	IRateAdaptationFactory* rateAdaptationFactory, IRateController* globalRateControl) :
 	OnDemandServerMediaSubsession(env, ReuseFirstSource),
@@ -54,14 +55,19 @@ LiveMediaSubsession(UsageEnvironment& env, LiveRtspServer& parent,
 	m_totalChannels(totalChannels),
 	m_sampleBuffer(nullptr),
 	m_rateAdaptationFactory(rateAdaptationFactory),
-	m_globalRateControl(globalRateControl)
+	m_globalRateControl(globalRateControl),
+	m_hasServedAnyVideoDeviceSource(false),
+	m_hasBeenProcessedToKill(false)
 {
-	const auto taskScheduler = &(envir().taskScheduler());
-	auto pollingScheduler = dynamic_cast<LiveSourceTaskScheduler*>(taskScheduler);
+	// sanity checks
+	assert(m_channelId.is_nil() == false);
+	assert(m_sessionName.empty() == false);
 
+	const auto taskScheduler = &(envir().taskScheduler());
+	const auto pollingScheduler = dynamic_cast<LiveSourceTaskScheduler*>(taskScheduler);
 	if (pollingScheduler)
 	{
-		pollingScheduler->AddMediaSubsession(m_sessionName, m_sourceId, this);
+		pollingScheduler->RegisterMediaSubsession(m_channelId, m_sessionName, m_sourceId, this);
 	}
 
 	// Create sample buffer according to number of 'switchable' channels.
@@ -78,23 +84,35 @@ LiveMediaSubsession(UsageEnvironment& env, LiveRtspServer& parent,
 	assert(m_sampleBuffer);
 }
 
-LiveMediaSubsession::
-~LiveMediaSubsession()
-{
-	const auto pScheduler = &(envir().taskScheduler());
-	auto pPollingScheduler = dynamic_cast<LiveSourceTaskScheduler*>(pScheduler);
 
+void 
+LiveMediaSubsession::
+cleanup()
+{
+	// get handle to task-scheduler.
+	const auto pScheduler = &(envir().taskScheduler());
+	const auto pPollingScheduler = dynamic_cast<LiveSourceTaskScheduler*>(pScheduler);
 	if (pPollingScheduler)
 	{
-		pPollingScheduler->RemoveMediaSubsession(m_sessionName, m_sourceId, this);
+		// unregister this subsession from task scheduler.
+		pPollingScheduler->DeRegisterMediaSubsession(m_channelId, m_sessionName, m_sourceId, this);
 	}
 
+	// release media buffer.
 	if (m_sampleBuffer)
 	{
 		delete m_sampleBuffer;
 		m_sampleBuffer = nullptr;
 	}
 }
+
+
+LiveMediaSubsession::
+~LiveMediaSubsession()
+{
+	cleanup();
+}
+
 
 void
 LiveMediaSubsession::
@@ -104,9 +122,16 @@ AddMediaSample(const std::shared_ptr<MediaSample>& mediaSample)
 
 	// Add the sample to the buffer where it will be parsed
 	m_sampleBuffer->AddMediaSample(mediaSample);
+	
 	// Iterate over all device sources and deliver the samples to the clients
 	for (const auto& deviceSource : m_deviceSources)
 	{
+		if (!m_hasServedAnyVideoDeviceSource)
+		{
+			// mark as this subsession has served media samples.
+			m_hasServedAnyVideoDeviceSource = true;
+		}
+
 		if (deviceSource->RetrieveMediaSampleFromBuffer())
 		{
 			if (!deviceSource->IsPlaying())
@@ -190,6 +215,18 @@ removeDeviceSource(LiveDeviceSource* deviceSource)
 		if (*source == deviceSource)
 		{
 			m_deviceSources.erase(source);
+
+			// is this the last device-source/client that was using this subsession?
+			if (m_deviceSources.empty())
+			{
+				// kill this subsession.
+				//cleanup(); - @TODO check if this needs to be called, it looks like its called when we call 
+				// CvRtspServer::RemoveChannel()
+
+				// kill the channel associated with this subsession.
+				//m_rtspServer.OnRtspDestroyChannel(m_sessionName);
+			}
+
 			break;
 		}
 	}
@@ -246,4 +283,13 @@ GetConnectedClientIds() const
 		clientIds.push_back(deviceSource->GetClientId());
 	}
 	return clientIds;
+}
+
+
+void 
+LiveMediaSubsession::
+KillChannel()
+{
+	m_hasBeenProcessedToKill = true;
+	m_rtspServer.OnRtspDestroyChannel(std::make_pair(m_channelId, m_sessionName));
 }

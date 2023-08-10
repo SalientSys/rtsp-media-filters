@@ -53,7 +53,7 @@ CreateNew(UsageEnvironment& env, unsigned clientId,
 	// When constructing a 'simple' LiveDeviceSource we'll just create a simple frame grabber
 	auto videoDeviceSource = new LiveMPEGVideoDeviceSource(env, clientId, parentSubsession,
 		frameGrabber, rateAdaptationFactory, globalRateControl);
-	OutPacketBuffer::increaseMaxSizeTo(600000); // bytes
+	OutPacketBuffer::increaseMaxSizeTo(300000); // bytes
 	return videoDeviceSource;
 }
 
@@ -150,8 +150,11 @@ RetrieveMediaSampleFromBuffer()
 
 	auto mediaSamples = splitPayloadIntoMediaSamples(dataBuffer, bufferSize, startTime);
 
+	//KE @TODO - need to optimize I-frame parsing above in splitPayloadIntoMediaSamples() then below `false`
+	//in the if condtion can be removed, else takes ~30 seconds to display first frame in vlc client if we wait.
+
 	// Have we not sent a key frame until now ?
-	if (m_isWaitingForKeyFrame)
+	if (/*m_isWaitingForKeyFrame*/false) 
 	{
 		// We need to be able to push a key frame first.
 		// @Note - there will be some delay before the video starts.

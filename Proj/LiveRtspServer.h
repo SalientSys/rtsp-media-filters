@@ -30,6 +30,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <live555/RTSPServer.hh>
 #endif
 #include <live555/BasicUsageEnvironment.hh>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 #include "AudioChannelDescriptor.h"
 #include "VideoChannelDescriptor.h"
@@ -45,46 +47,67 @@ namespace CvRtsp
 	/// Callback for when a client session is PLAYed.
 	/// Parameter is the client session id.
 	using OnClientSessionPlayHandler = std::function<void(unsigned)>;
+	
+	/// Alias that uniquely identifies a RTSP channel or RTSP session.
+	using UniqueChannelSessionIdentifier = std::pair<boost::uuids::uuid, std::string>;
+
+	/// Callback for when a channel needs to be destroyed.
+	/// @ToDo - use channelId instead of channelName here after making changes to uniquely
+	/// identify a channel through its ID (use boost::uuids::uuid)
+	using OnDestroyChannelHandler = std::function<bool(const UniqueChannelSessionIdentifier&)>;
 
 	/// RtspChannel descriptor
 	struct RtspChannel
 	{
 		RtspChannel() :
-			ChannelId(0)
+			ChannelId(boost::uuids::nil_uuid()),
+			ChannelName(""),
+			CameraId(0) // @KE - need to revisit here, `0` is a valid camera index in CV
 		{
-
 		}
 
-		RtspChannel(uint32_t channelId, const std::string& channelName,
-			VideoChannelDescriptor video, AudioChannelDescriptor audio) :
+		RtspChannel(const boost::uuids::uuid& channelId, const std::string& channelName, 
+			unsigned int cameraId, VideoChannelDescriptor video, AudioChannelDescriptor audio) :
 			ChannelId(channelId),
 			ChannelName(channelName),
+			CameraId(cameraId),
 			VideoDescriptor(video),
 			AudioDescriptor(audio)
 		{
-
 		}
 
-		RtspChannel(uint32_t channelId, const std::string& channelName, VideoChannelDescriptor video) :
+		RtspChannel(const boost::uuids::uuid& channelId, const std::string& channelName,
+			unsigned int cameraId, VideoChannelDescriptor video) :
 			ChannelId(channelId),
 			ChannelName(channelName),
+			CameraId(cameraId),
 			VideoDescriptor(video)
 		{
-
 		}
 
-		RtspChannel(uint32_t channelId, const std::string& channelName, AudioChannelDescriptor audio) :
+		RtspChannel(const boost::uuids::uuid& channelId, const std::string& channelName,
+			unsigned int cameraId, AudioChannelDescriptor audio) :
 			ChannelId(channelId),
 			ChannelName(channelName),
+			CameraId(cameraId),
 			AudioDescriptor(audio)
 		{
-
 		}
 
-		uint32_t ChannelId;
+		/// Unique id for this channel.
+		boost::uuids::uuid ChannelId;
+
+		/// Unique name for this channel.
 		std::string ChannelName;
+
+		/// Video channel properties.
 		VideoChannelDescriptor VideoDescriptor;
+
+		/// Audio channel properties.
 		AudioChannelDescriptor AudioDescriptor;
+
+		/// Camera used for this channel.
+		unsigned int CameraId;
 	};
 
 	/// Our RTSP server class is derived from the liveMedia RTSP server. It extends the live555 RTSP server
@@ -171,13 +194,20 @@ namespace CvRtsp
 		}
 
 		///
+		/// Register channel-destroy handler.
+		void SetOnRtspDestroyChannelCallback(OnDestroyChannelHandler onDestroyChannel)
+		{
+			m_onDestroyChannel = onDestroyChannel;
+		}
+
+		///
 		/// Handler to be called when clients join.
 		///
 		/// @param[in] channelId Channel id.
 		/// @param[in] sourceId Source id.
 		/// @param[in] clientId Client id.
 		/// @param[in] ipAddress Ip address.
-		void OnClientJoin(uint32_t channelId, uint32_t sourceId, uint32_t clientId, std::string& ipAddress);
+		void OnClientJoin(const boost::uuids::uuid &channelId, uint32_t sourceId, uint32_t clientId, const std::string& ipAddress);
 
 		///
 		/// Handler to be called when clients update.
@@ -186,7 +216,7 @@ namespace CvRtsp
 		/// @param[in] sourceId Source id.
 		/// @param[in] clientId Client id.
 		/// @param[in] channelIndex Channel index.
-		void OnClientUpdate(uint32_t channelId, uint32_t sourceId, uint32_t clientId, uint32_t channelIndex);
+		void OnClientUpdate(const boost::uuids::uuid& channelId, uint32_t sourceId, uint32_t clientId, uint32_t channelIndex);
 
 		///
 		/// Handler to be called when clients leave.
@@ -194,7 +224,16 @@ namespace CvRtsp
 		/// @param[in] channelId Channel id.
 		/// @param[in] sourceId Source id.
 		/// @param[in] clientId Client id.
-		void OnClientLeave(uint32_t channelId, uint32_t sourceId, uint32_t clientId);
+		void OnClientLeave(const boost::uuids::uuid& channelId, uint32_t sourceId, uint32_t clientId);
+
+		///
+		/// This called when the subsession associated with a specific channel has no
+		/// longer any active device-source that is registered under it.
+		/// Meaning when there are no active vlc clients using the subsession, then 
+		/// channel associated with this subsession is no longer needed, so kill it.
+		/// 
+		/// @param[in]	channelIdPair	Pair that uniquesly identifies the channel.
+		void OnRtspDestroyChannel(UniqueChannelSessionIdentifier channelIdPair);
 
 		///
 		/// Check to see if a requested channel exists.
@@ -263,6 +302,9 @@ namespace CvRtsp
 
 		/// On client session play callback
 		OnClientSessionPlayHandler m_onClientSessionPlay;
+
+		/// Callback handler to destroy the specific channel/session in our camera-server instance.
+		OnDestroyChannelHandler m_onDestroyChannel;
 
 		/// Redefined virtual functions: this method returns the session identified by streamName provided its valid
 		virtual ServerMediaSession* lookupServerMediaSession(char const* streamName);

@@ -42,8 +42,9 @@ namespace CvRtsp
 
 		///Constructor.
 		///
-		/// @param channelId Media channel id.
-		MediaChannel(const std::string& channelName) :
+		/// @param channelId Media	Unique channel id.
+		MediaChannel(const boost::uuids::uuid& channelId, const std::string& channelName) :
+			m_channelId(channelId),
 			m_channelName(channelName)
 		{
 		}
@@ -59,7 +60,7 @@ namespace CvRtsp
 		/// @return True if delivery successful.
 		bool AddVideoMediaSamples(const std::vector<std::shared_ptr<MediaSample>>& mediaSamples)
 		{
-			return deliverVideo(m_channelName, mediaSamples);
+			return deliverVideo(m_channelId, m_channelName, mediaSamples);
 		}
 
 		/// The addAudioMediaSamples() can be called to deliver media samples to 
@@ -70,27 +71,32 @@ namespace CvRtsp
 		/// @return True if delivery successful.
 		bool AddAudioMediaSamples(const std::vector<std::shared_ptr<MediaSample>>& mediaSamples)
 		{
-			return deliverAudio(m_channelName, mediaSamples);
+			return deliverAudio(m_channelId, m_channelName, mediaSamples);
 		}
 
 	private:
 		/// The subclass must implement delivery of video media samples to the media sink
 		///
-		/// @param channelId Channel id.
-		/// @param mediaSamples Vector containing video samples.
+		/// @param channelId		Unique channel id.
+		/// @param mediaSamples		Vector containing video samples.
 		///
 		/// @return True if delivery successful.
-		virtual bool deliverVideo(const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
+		virtual bool deliverVideo(const boost::uuids::uuid& channelId, const std::string& channelName,
+			const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
 
 		/// The subclass must implement delivery of audio media samples to the media sink
 		///
-		/// @param channelId Channel id.
-		/// @param mediaSamples Vector containing audio samples.
+		/// @param channelId		Unique channel id.
+		/// @param mediaSamples		Vector containing audio samples.
 		///
 		/// @return True if delivery successful.
-		virtual bool deliverAudio(const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
+		virtual bool deliverAudio(const boost::uuids::uuid& channelId, const std::string& channelName,
+			const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
 
 		/// Unique channel id
+		boost::uuids::uuid m_channelId;
+
+		/// Channel Name (should be unique).
 		std::string m_channelName;
 	};
 }

@@ -37,7 +37,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 using namespace CvRtsp;
 
 LiveH264Subsession::LiveH264Subsession(UsageEnvironment& env, LiveRtspServer& rParent,
-    const unsigned uiChannelId, unsigned uiSourceId,
+    const boost::uuids::uuid& uiChannelId, unsigned int uiSourceId,
     const std::string& sSessionName,
     const std::string& sSps, const std::string& sPps,
     IRateAdaptationFactory* pFactory,

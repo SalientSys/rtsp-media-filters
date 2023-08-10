@@ -3,8 +3,13 @@
 
 #pragma once
 
+#include <assert.h>
+#include <boost/uuid/uuid.hpp>
+
 namespace CvRtsp
 {
+
+#pragma region H.264
 	/// Nal unit prefix.
 	const BYTE NalUnitPrefix[3] = { 0x00, 0x00, 0x01 };
 
@@ -49,8 +54,10 @@ namespace CvRtsp
 	{
 		return (nalUnitHeader & 0x1f) == 8;
 	}
+#pragma endregion
 
-#pragma region h265
+
+#pragma region H.265
 	///
 	/// Determine if nal unit header is a video parameter set.
 	///
@@ -97,6 +104,7 @@ namespace CvRtsp
 	}
 #pragma endregion
 
+
 #pragma region MPEG4
 	namespace MPEG4_Codes
 	{
@@ -136,30 +144,54 @@ namespace CvRtsp
 
 
 #pragma region TimeFunctions
-///
-/// Converts seconds to micro-seconds.
-///
-/// @param[in]	seconds	Seconds to convert.
-///
-/// @return	Converted value in micro-seconds.
-template<typename T>
-auto SecondToMicroSecond(T seconds)
-{
-	return seconds * pow(10, 6);
-}
+	///
+	/// Constants for time units.
+	const int MICROSECOND_PER_SECOND = 1000000;
+	const double MICROSECOND_PER_MILLISECOND = 1000;
 
 
-///
-/// Converts milli-seconds to micro-seconds.
-///
-/// @param[in]	milliSeconds	Milli-Seconds to convert.
-///
-/// @return	Converted value in micro-seconds.
-template<typename T>
-auto MilliSecondToMicroSecond(T milliSeconds)
-{
-	return SecondToMicroSecond<decltype(milliSeconds* pow(10.0, -3))>(milliSeconds * pow(10.0, -3));
-}
+	///
+	/// Converts seconds to microseconds.
+	///
+	/// @param[in]	seconds	Seconds to convert.
+	///
+	/// @return	Converted value in microseconds, if no overflow else -1.
+	template<typename T>
+	T SecondsToMicroseconds(T seconds)
+	{
+		T safetyCheck = seconds * MICROSECOND_PER_SECOND;
+		if (seconds == 0 ||
+			safetyCheck / MICROSECOND_PER_SECOND == seconds)
+		{
+			// valid.
+			return safetyCheck;
+		}
+
+		assert(false);
+		return -1;
+	}
+
+
+	///
+	/// Converts milliseconds to microseconds.
+	///
+	/// @param[in]	milliseconds	Milliseconds to convert.
+	///
+	/// @return	Converted value in microseconds, if no overflow else -1.
+	template<typename T>
+	T MillisecondsToMicroseconds(T milliseconds)
+	{
+		T safetyCheck = milliseconds * MICROSECOND_PER_MILLISECOND;
+		if (milliseconds == 0 ||
+			safetyCheck / MICROSECOND_PER_MILLISECOND == milliseconds)
+		{
+			// valid.
+			return safetyCheck;
+		}
+
+		assert(false);
+		return -1;
+	}
 #pragma endregion
 
 }

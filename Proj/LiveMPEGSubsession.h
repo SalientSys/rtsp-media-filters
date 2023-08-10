@@ -47,7 +47,7 @@ namespace CvRtsp
 		///
 		/// @return Live video device source.
 		LiveMPEGSubsession(UsageEnvironment& env, LiveRtspServer& rParent,
-			const unsigned uiChannelId, unsigned uiSourceId,
+			const boost::uuids::uuid &uiChannelId, unsigned int uiSourceId,
 			const std::string& sSessionName, IRateAdaptationFactory* pFactory,
 			IRateController* pGlobalRateControl, std::string configStr, int profileAndLevelIndication);
 

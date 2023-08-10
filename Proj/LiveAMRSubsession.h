@@ -36,7 +36,7 @@ namespace CvRtsp
 	{
 	public:
 		LiveAMRSubsession(UsageEnvironment& env, LiveRtspServer& rParent,
-			const unsigned uiChannelId, unsigned uniqueSessionID,
+			const boost::uuids::uuid& uiChannelId, unsigned uniqueSessionID,
 			const std::string& sSessionName,
 			const unsigned uiNumChannels, const unsigned uiBitsPerSample, const unsigned uiSamplingFrequency,
 			IRateAdaptationFactory* pFactory, IRateController* pGlobalRateControl);

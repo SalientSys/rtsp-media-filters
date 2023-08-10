@@ -7,6 +7,8 @@
 #pragma once
 #include <climits>
 #include <unordered_map>
+
+#include "LiveRtspServer.h"
 #include "ChannelManager.h"
 #include "PacketManagerMediaChannel.h"
 
@@ -17,10 +19,10 @@ namespace CvRtsp
 		/// Disallow default constructor.
 		PacketManager() = delete;
 
-		PacketManager(const std::string& channelName) :
+		PacketManager(const boost::uuids::uuid& channelId, const std::string& channelName) :
 			m_videoSourceId(UINT_MAX),
 			m_audioSourceId(UINT_MAX),
-			m_packetManager(std::make_shared<PacketManagerMediaChannel>(channelName))
+			m_packetManager(std::make_shared<PacketManagerMediaChannel>(channelId, channelName))
 		{
 		}
 
@@ -105,42 +107,46 @@ namespace CvRtsp
 		/// 
 		/// Set the video source id.
 		///
-		/// @param[in] channelId Channel id.
-		/// @param[in] videoSourceId Video source id.
+		/// @param[in] channelId		Unique channel id.
+		/// @param[in] videoSourceId	Video source id.
 		/// 
 		/// @TODO - change this function name, does not indicate correctly what it does.
-		void SetVideoSourceId(const std::string& channelName, const uint32_t videoSourceId);
+		void SetVideoSourceId(const boost::uuids::uuid &channelId, const std::string& channelName, 
+			const uint32_t videoSourceId);
 
 		///
 		/// Set the audio source id.
 		///
-		/// @param[in] channelId Channel id.
-		/// @param audioSourceId Audio source id.
+		/// @param[in] channelId		Unique channel id.
+		/// @param[in] audioSourceId	Audio source id.
 		/// 
 		/// @TODO - change this function name, does not indicate correctly what it does.
-		void SetAudioSourceId(const std::string& channelName, const uint32_t audioSourceId);
+		void SetAudioSourceId(const boost::uuids::uuid &channelId, const std::string& channelName, 
+			const uint32_t audioSourceId);
 
 		///
 		/// Get the packet manager for this channel.
 		///
-		/// @param[in] channelId Channel id.
+		/// @param[in] channelId	Unique channel id.
 		/// 
 		/// @return Media channel packet manager.
-		const std::shared_ptr<PacketManagerMediaChannel> GetPacketManager(const std::string& channelName) const;
+		const std::shared_ptr<PacketManagerMediaChannel> GetPacketManager(const boost::uuids::uuid& channelId,
+			const std::string& channelName) const;
 
 		///
 		/// Get media.
 		///
-		/// @param channelId Channel id.
-		/// @param sourceId Source id.
+		/// @param channelId	Unique channel id.
+		/// @param sourceId		Source id.
 		///
 		/// @return Media sample from the packet manager.
-		std::shared_ptr<MediaSample> GetMedia(const std::string& channelName, uint32_t sourceId) override;
+		std::shared_ptr<MediaSample> GetMedia(const boost::uuids::uuid& channelId, const std::string& channelName, 
+			uint32_t sourceId) override;
 
 	protected:
 		///
-		/// Maps a packet-manager related to particular channel.
-		using PacketManagerChannelMap = std::unordered_map<std::string, PacketManager>;
+		/// Alias that maps a packet-manager related to particular pair <channelid, channelName>.
+		using PacketManagerChannelMap = std::map<UniqueChannelSessionIdentifier, PacketManager>;
 
 		PacketManagerChannelMap m_packetManagerMediaChannelMap;
 	};

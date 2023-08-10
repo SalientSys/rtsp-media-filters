@@ -64,7 +64,7 @@ LiveDeviceSource(UsageEnvironment& env, unsigned clientId, LiveMediaSubsession* 
 	m_rateControl(rateControl),
 	m_lastPacketNumReceived(0)
 {
-	m_parentSubsession->addDeviceSource(this);
+	m_parentSubsession->addDeviceSource(this); // register with the subsession.
 	if (m_rateAdaptationFactory)
 	{
 		m_rateAdaptation = m_rateAdaptationFactory->getInstance();
@@ -74,7 +74,7 @@ LiveDeviceSource(UsageEnvironment& env, unsigned clientId, LiveMediaSubsession* 
 LiveDeviceSource::
 ~LiveDeviceSource()
 {
-	m_parentSubsession->removeDeviceSource(this);
+	m_parentSubsession->removeDeviceSource(this); // un-register with the subsession.
 	if (m_frameGrabber)
 	{
 		delete m_frameGrabber;

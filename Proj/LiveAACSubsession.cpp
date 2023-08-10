@@ -31,7 +31,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 using namespace CvRtsp;
 
 LiveAACSubsession::LiveAACSubsession(UsageEnvironment& env, LiveRtspServer& rParent,
-	const unsigned uiChannelId, unsigned uiSourceID,
+	const boost::uuids::uuid& uiChannelId, unsigned uiSourceID,
 	const std::string& sSessionName,
 	const unsigned uiNumChannels, const unsigned uiBitsPerSample, const unsigned uiSamplingFrequency,
 	const std::string& sConfigStr,

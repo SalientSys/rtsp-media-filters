@@ -11,10 +11,11 @@ using namespace CvRtsp;
 
 void
 MultiChannelManager::
-SetVideoSourceId(const std::string& channelName, const uint32_t videoSourceId)
+SetVideoSourceId(const boost::uuids::uuid& channelId, const std::string& channelName, 
+	const uint32_t videoSourceId)
 {
-	// Do we have a packet-manager with the said `channelName` ?
-	const auto packetManager = m_packetManagerMediaChannelMap.find(channelName);
+	// Do we have a packet-manager with the said <channelId, channelName> ?
+	const auto packetManager = m_packetManagerMediaChannelMap.find(std::make_pair(channelId, channelName));
 	if (packetManager != std::end(m_packetManagerMediaChannelMap))
 	{
 		packetManager->second.SetVideoSourceId(videoSourceId);
@@ -22,39 +23,41 @@ SetVideoSourceId(const std::string& channelName, const uint32_t videoSourceId)
 	else
 	{
 		// Create and associate packet-manager with the `channelName`.
-		PacketManager manager(channelName);
+		PacketManager manager(channelId, channelName);
 		manager.SetVideoSourceId(videoSourceId);
-		m_packetManagerMediaChannelMap.emplace(channelName, manager);
+		m_packetManagerMediaChannelMap.emplace(std::make_pair(channelId, channelName), manager);
 	}
 }
 
 void
 MultiChannelManager::
-SetAudioSourceId(const std::string& channelName, const uint32_t audioSourceId)
+SetAudioSourceId(const boost::uuids::uuid& channelId, const std::string& channelName, 
+	const uint32_t audioSourceId)
 {
-	// Do we have a packet-manager with the said `channelName` ?
-	const auto packetManager = m_packetManagerMediaChannelMap.find(channelName);
+	// Do we have a packet-manager with the said  <channelId, channelName> ?
+	const auto packetManager = m_packetManagerMediaChannelMap.find(std::make_pair(channelId, channelName));
 	if (packetManager != std::end(m_packetManagerMediaChannelMap))
 	{
 		packetManager->second.SetAudioSourceId(audioSourceId);
 	}
 	else
 	{
-		// Create and associate packet-manager with the `channelName`.
-		PacketManager manager(channelName);
+		// Create and associate packet-manager with the <channelId, channelName> ?
+		PacketManager manager(channelId, channelName);
 		manager.SetAudioSourceId(audioSourceId);
-		m_packetManagerMediaChannelMap.emplace(channelName, manager);
+		m_packetManagerMediaChannelMap.emplace(std::make_pair(channelId, channelName), manager);
 	}
 }
 
 const std::shared_ptr<PacketManagerMediaChannel>
 MultiChannelManager::
-GetPacketManager(const std::string& channelName) const
+GetPacketManager(const boost::uuids::uuid &channelId,
+	const std::string &channelName) const
 {
-	auto packetManager = m_packetManagerMediaChannelMap.find(channelName);
-	if (packetManager != std::end(m_packetManagerMediaChannelMap))
+	const auto packetManagerIt = m_packetManagerMediaChannelMap.find(std::make_pair(channelId, channelName));
+	if (packetManagerIt != std::cend(m_packetManagerMediaChannelMap))
 	{
-		return packetManager->second.GetPacketManager();
+		return packetManagerIt->second.GetPacketManager();
 	}
 	return nullptr;
 }
@@ -62,9 +65,10 @@ GetPacketManager(const std::string& channelName) const
 
 std::shared_ptr<MediaSample>
 MultiChannelManager::
-GetMedia(const std::string& channelName, uint32_t sourceId)
+GetMedia(const boost::uuids::uuid& channelId, const std::string& channelName,
+	uint32_t sourceId)
 {
-	const auto packetManager = m_packetManagerMediaChannelMap.find(channelName);
+	const auto packetManager = m_packetManagerMediaChannelMap.find(std::make_pair(channelId, channelName));
 	if (packetManager != std::end(m_packetManagerMediaChannelMap))
 	{
 		if (sourceId == packetManager->second.GetVideoSourceId())

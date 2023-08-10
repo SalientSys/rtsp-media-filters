@@ -25,8 +25,10 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #pragma once
 
 #include <map>
+
 #include <live555/BasicUsageEnvironment.hh>
 
+#include "LiveRtspServer.h"
 #include "LiveDeviceSource.h"
 #include "LiveMediaSubsession.h"
 
@@ -36,7 +38,8 @@ namespace CvRtsp
 	class ChannelManager;
 	class LiveMediaSubsession;
 
-	using LiveMediaSubSessionMap = std::map<std::pair<std::string, unsigned>, LiveMediaSubsession*>;
+	/// Alias for map, containing mediasubsession's identified by pair<channel-id, channel-name>
+	using LiveMediaSubSessionMap = std::map<UniqueChannelSessionIdentifier, LiveMediaSubsession*>;
 
 	/// Maximum number of cycles in the while loop.
 	const unsigned MaxRevolutions = 60;
@@ -74,27 +77,33 @@ namespace CvRtsp
 		/// 
 		/// Registers a LiveMediaSubsession with the scheduler.
 		///
-		/// @param[in] channelId Channel id.
-		/// @param[in] sourceId Source id.
-		/// @param[in] mediaSubsession Live media subsession.
-		void AddMediaSubsession(const std::string& channelName, uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
+		/// @param[in] channelId		Channel id.
+		/// @param[in] channelName		Channel name.
+		/// @param[in] sourceId			Source id.
+		/// @param[in] mediaSubsession	Live media subsession.
+		void RegisterMediaSubsession(const boost::uuids::uuid& channelId, const std::string& channelName,
+			uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
 
 		/// 
 		/// Deregisters a LiveMediaSubsession from the scheduler.
 		///
-		/// @param[in] channelId Channel id.
-		/// @param[in] sourceId Source id.
-		/// @param[in] mediaSubsession Live media subsession.
-		void RemoveMediaSubsession(const std::string& channelName, uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
+		/// @param[in] channelId		Channel id.
+		/// @param[in] channelName		Channel name.
+		/// @param[in] sourceId			Source id.
+		/// @param[in] mediaSubsession	Live media subsession.
+		void DeRegisterMediaSubsession(const boost::uuids::uuid &channelId, const std::string& channelName,
+			uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
 
 		/// 
 		/// Deregisters a LiveMediaSubsession from the scheduler.
 		///
-		/// @param[in] channelId Channel id.
-		/// @param[in] sourceId Source id.
+		/// @param[in] channelId	Channel id.
+		/// @param[in] channelName	Channel name.
+		/// @param[in] sourceId		Source id.
 		/// 
 		/// @return mediaSubsession Live media subsession.
-		LiveMediaSubsession* GetMediaSubsession(const std::string& channelName, uint32_t sourceId);
+		LiveMediaSubsession* GetMediaSubsession(const boost::uuids::uuid& channelId,
+			const std::string& channelName, uint32_t sourceId);
 
 		/// 
 		/// Processes all registered media subsessions.
@@ -144,9 +153,12 @@ namespace CvRtsp
 
 		/// Map which stores ALL media subsessions. Each subsession is identified via a unique id.
 		//MediaSessionMap m_mediaSessions;
-		LiveMediaSubSessionMap m_mediaSubSessions;
+		LiveMediaSubSessionMap m_mediaSubSessionsMap;
 
 		/// Helper method to process media samples within the live555 event loop.
 		void processLiveSources();
+
+		/// Destroys subsession if there are no active device-sources usibg it.
+		void processMediaSubsessions();
 	};
 }
