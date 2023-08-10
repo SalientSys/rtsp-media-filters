@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>SalientSys.livemedia-ext.v142.mt</id>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <authors>miseri, Salient Systems</authors>
     <description>Private Visual Studio build of the SalientSys.LiveMediaExt.v142.mt sources. It is compiled using the v142 Visual C++ toolset and static runtime.</description>
     <license type="expression">GNU-LGPL</license>
@@ -11,7 +11,7 @@
     <tags>native nativepackage c++ cpp LiveMediaExt v142</tags>
     <dependencies>
       <dependency id="boost" version="[1.72.0]" />
-      <dependency id="SalientSys.live555.v142.mt" version="[1.0.2]" />
+      <dependency id="SalientSys.live555.v142.mt" version="[1.0.3]" />
       <dependency id="SalientSys.Intel-tbb" version="[10.0.3]" />
       <dependency id="SalientSys.rtsp-logger.v142.mt" version="[1.0.2,)" />
     </dependencies>
