@@ -48,6 +48,6 @@ namespace CvRtsp
 		/// @param[in] sourceId Source id.
 		///
 		/// @return Media sample, nullptr if not found.
-		virtual std::shared_ptr<MediaSample> GetMedia(uint32_t channelId, uint32_t sourceId) = 0;
+		virtual std::shared_ptr<MediaSample> GetMedia(const std::string& channelName, uint32_t sourceId) = 0;
 	};
 }

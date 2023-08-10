@@ -61,7 +61,7 @@ LiveMediaSubsession(UsageEnvironment& env, LiveRtspServer& parent,
 
 	if (pollingScheduler)
 	{
-		pollingScheduler->AddMediaSubsession(m_channelId, m_sourceId, this);
+		pollingScheduler->AddMediaSubsession(m_sessionName, m_sourceId, this);
 	}
 
 	// Create sample buffer according to number of 'switchable' channels.
@@ -86,7 +86,7 @@ LiveMediaSubsession::
 
 	if (pPollingScheduler)
 	{
-		pPollingScheduler->RemoveMediaSubsession(m_channelId, m_sourceId, this);
+		pPollingScheduler->RemoveMediaSubsession(m_sessionName, m_sourceId, this);
 	}
 
 	if (m_sampleBuffer)

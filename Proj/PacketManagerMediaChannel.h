@@ -39,7 +39,7 @@ namespace CvRtsp
 	public:
 		///
 		/// Constructor
-		PacketManagerMediaChannel(uint32_t channelId);
+		PacketManagerMediaChannel(const std::string& channelName);
 
 		///
 		/// This method returns a video media sample if available.
@@ -70,7 +70,7 @@ namespace CvRtsp
 		/// @param[in] mediaSamples Media samples to send.
 		///
 		/// @return True if sample sent.
-		bool deliverVideo(uint32_t channelId, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
+		bool deliverVideo(const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
 
 		///
 		/// The subclass must implement delivery of audio media samples to the media sink.
@@ -79,6 +79,6 @@ namespace CvRtsp
 		/// @param[in] mediaSamples Media samples to send.
 		///
 		/// @return True if sample sent.
-		bool deliverAudio(uint32_t channelId, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
+		bool deliverAudio(const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) override;
 	};
 }

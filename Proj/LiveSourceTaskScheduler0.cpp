@@ -93,45 +93,45 @@ doEventLoop(char volatile* watchVariable)
 
 void
 LiveSourceTaskScheduler0::
-AddMediaSubsession(uint32_t channelId, uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
+AddMediaSubsession(const std::string& channelName, uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
 {
 	{
 		std::stringstream ss;
-		ss << "LiveSourceTaskScheduler0::AddMediaSubsession: " << channelId << " source: " << sourceId;
+		ss << "LiveSourceTaskScheduler0::AddMediaSubsession: " << channelName << " source: " << sourceId;
 		log_rtsp_debug(ss.str());
 	}
 
-	const auto sessionMapIterator = m_mediaSubSessions.find(std::make_pair(channelId, sourceId));
+	const auto sessionMapIterator = m_mediaSubSessions.find(std::make_pair(channelName, sourceId));
 	//auto mediaSessionMapIterator = m_mediaSessions.find(channelId);
 	if (sessionMapIterator == m_mediaSubSessions.end())
 	{
 		// Need to add session.
-		m_mediaSubSessions.emplace(std::make_pair(channelId, sourceId), mediaSubsession);
+		m_mediaSubSessions.emplace(std::make_pair(channelName, sourceId), mediaSubsession);
 	}
 }
 
 void
 LiveSourceTaskScheduler0::
-RemoveMediaSubsession(uint32_t  channelId, uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
+RemoveMediaSubsession(const std::string& channelName, uint32_t sourceId, LiveMediaSubsession* mediaSubsession)
 {
 	{
 		std::stringstream ss;
-		ss << "Trying to remove media subsession with channel: " << channelId << " source: " << sourceId;
+		ss << "Trying to remove media subsession with channel: " << channelName << " source: " << sourceId;
 		log_rtsp_debug(ss.str());
 	}
 
-	const auto sessionMapIterator = m_mediaSubSessions.find(std::make_pair(channelId, sourceId));
+	const auto sessionMapIterator = m_mediaSubSessions.find(std::make_pair(channelName, sourceId));
 	if (sessionMapIterator != cend(m_mediaSubSessions))
 	{
-		m_mediaSubSessions.erase(std::make_pair(channelId, sourceId));
+		m_mediaSubSessions.erase(std::make_pair(channelName, sourceId));
 	}
 }
 
 LiveMediaSubsession*
 LiveSourceTaskScheduler0::
-GetMediaSubsession(uint32_t channelId, uint32_t sourceId)
+GetMediaSubsession(const std::string& channelName, uint32_t sourceId)
 {
-	auto mediaSubSession = m_mediaSubSessions.find(std::make_pair(channelId, sourceId));
+	auto mediaSubSession = m_mediaSubSessions.find(std::make_pair(channelName, sourceId));
 	if (mediaSubSession != m_mediaSubSessions.end())
 	{
 		return mediaSubSession->second;
@@ -169,7 +169,7 @@ processLiveSources()
 					break;
 				}
 				// make sure channel and source ids are set
-				mediaSample->SetChannelId(mediaSubSession.first.first);
+				mediaSample->SetChannelName(mediaSubSession.first.first);
 				mediaSample->SetSourceId(mediaSubSession.first.second);
 				mediaSubSession.second->AddMediaSample(mediaSample);
 

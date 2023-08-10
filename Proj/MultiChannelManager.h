@@ -6,7 +6,7 @@
 ///
 #pragma once
 #include <climits>
-#include <map>
+#include <unordered_map>
 #include "ChannelManager.h"
 #include "PacketManagerMediaChannel.h"
 
@@ -17,10 +17,10 @@ namespace CvRtsp
 		/// Disallow default constructor.
 		PacketManager() = delete;
 
-		PacketManager(uint32_t channelId) :
+		PacketManager(const std::string& channelName) :
 			m_videoSourceId(UINT_MAX),
 			m_audioSourceId(UINT_MAX),
-			m_packetManager(std::make_shared<PacketManagerMediaChannel>(channelId))
+			m_packetManager(std::make_shared<PacketManagerMediaChannel>(channelName))
 		{
 		}
 
@@ -102,27 +102,31 @@ namespace CvRtsp
 		/// Default constructor.
 		MultiChannelManager() = default;
 
-		///
+		/// 
 		/// Set the video source id.
 		///
 		/// @param[in] channelId Channel id.
 		/// @param[in] videoSourceId Video source id.
-		void SetVideoSourceId(const uint32_t channelId, const uint32_t videoSourceId);
+		/// 
+		/// @TODO - change this function name, does not indicate correctly what it does.
+		void SetVideoSourceId(const std::string& channelName, const uint32_t videoSourceId);
 
 		///
 		/// Set the audio source id.
 		///
 		/// @param[in] channelId Channel id.
 		/// @param audioSourceId Audio source id.
-		void SetAudioSourceId(const uint32_t channelId, const uint32_t audioSourceId);
+		/// 
+		/// @TODO - change this function name, does not indicate correctly what it does.
+		void SetAudioSourceId(const std::string& channelName, const uint32_t audioSourceId);
 
 		///
-		/// Get the packet manager for this channel manager.
+		/// Get the packet manager for this channel.
 		///
 		/// @param[in] channelId Channel id.
 		/// 
 		/// @return Media channel packet manager.
-		const std::shared_ptr<PacketManagerMediaChannel> GetPacketManager(uint32_t channelId) const;
+		const std::shared_ptr<PacketManagerMediaChannel> GetPacketManager(const std::string& channelName) const;
 
 		///
 		/// Get media.
@@ -131,10 +135,12 @@ namespace CvRtsp
 		/// @param sourceId Source id.
 		///
 		/// @return Media sample from the packet manager.
-		std::shared_ptr<MediaSample> GetMedia(uint32_t channelId, uint32_t sourceId) override;
+		std::shared_ptr<MediaSample> GetMedia(const std::string& channelName, uint32_t sourceId) override;
 
 	protected:
-		using PacketManagerChannelMap = std::map<uint32_t, PacketManager>;
+		///
+		/// Maps a packet-manager related to particular channel.
+		using PacketManagerChannelMap = std::unordered_map<std::string, PacketManager>;
 
 		PacketManagerChannelMap m_packetManagerMediaChannelMap;
 	};

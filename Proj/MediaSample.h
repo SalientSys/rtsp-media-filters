@@ -76,7 +76,7 @@ namespace CvRtsp
 		///
 		/// @return Media sample.
 		static std::shared_ptr<MediaSample> CreateMediaSample(BYTE* data, int size, double startTime,
-			bool isKeyFrame = false, uint32_t channelId = 0, uint32_t sourceId = 0, bool isSyncPoint = false);
+			bool isKeyFrame = false, const std::string& channelName = std::string(), uint32_t sourceId = 0, bool isSyncPoint = false);
 
 		/// 
 		/// Data buffer contained in this media sample.
@@ -126,17 +126,17 @@ namespace CvRtsp
 		/// Get channel id.
 		///
 		/// @return Channel id.
-		uint32_t GetChannelId() const
+		std::string GetChannelName() const
 		{
-			return m_channelId;
+			return m_channelName;
 		}
 
 		/// Set channel id.
 		///
 		/// @param[in] channelId Channel id.
-		void SetChannelId(uint32_t channelId)
+		void SetChannelName(const std::string& channelName)
 		{
-			m_channelId = channelId;
+			m_channelName = channelName;
 		}
 
 		/// Get source id.
@@ -179,7 +179,7 @@ namespace CvRtsp
 		MediaSample() :
 			m_startTimeMs(0.0),
 			m_marker(false),
-			m_channelId(0),
+			m_channelName(std::move(std::string())),
 			m_sourceId(0),
 			m_isKeyFrame(false)
 		{
@@ -195,7 +195,7 @@ namespace CvRtsp
 		/// @param[in] channelId	Channel id.
 		/// @param[in] sourceId		Source id.
 		/// @param[in] isSyncPoint	True if this is a marker.
-		MediaSample(BYTE* data, int size, double startTimeMs, bool isKeyFrame, uint32_t channelId, uint32_t sourceId, bool isSyncPoint);
+		MediaSample(BYTE* data, int size, double startTimeMs, bool isKeyFrame, std::string channelName, uint32_t sourceId, bool isSyncPoint);
 
 		/// Media data byte stream.
 		Buffer m_data;
@@ -207,7 +207,7 @@ namespace CvRtsp
 		bool m_marker;
 
 		/// Channel id
-		uint32_t m_channelId;
+		std::string m_channelName;
 
 		/// Source id
 		uint32_t m_sourceId;

@@ -29,8 +29,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 using namespace CvRtsp;
 
 PacketManagerMediaChannel::
-PacketManagerMediaChannel(uint32_t channelId)
-	: MediaChannel(channelId)
+PacketManagerMediaChannel(const std::string& channelName)
+	: MediaChannel(channelName)
 {
 	m_videoSamples.set_capacity(QueueCapacity);
 	m_audioSamples.set_capacity(QueueCapacity);
@@ -38,7 +38,7 @@ PacketManagerMediaChannel(uint32_t channelId)
 
 bool
 PacketManagerMediaChannel::
-deliverVideo(uint32_t channelId,
+deliverVideo(const std::string& channelName,
 	const std::vector<std::shared_ptr<MediaSample>>& mediaSamples)
 {
 	for (const auto& mediaSample : mediaSamples)
@@ -51,7 +51,7 @@ deliverVideo(uint32_t channelId,
 
 bool
 PacketManagerMediaChannel::
-deliverAudio(uint32_t channelId,
+deliverAudio(const std::string& channelName,
 	const std::vector<std::shared_ptr<MediaSample>>& mediaSamples)
 {
 	for (const auto& mediaSample : mediaSamples)

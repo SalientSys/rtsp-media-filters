@@ -43,8 +43,8 @@ namespace CvRtsp
 		///Constructor.
 		///
 		/// @param channelId Media channel id.
-		MediaChannel(uint32_t channelId) :
-			m_channelId(channelId)
+		MediaChannel(const std::string& channelName) :
+			m_channelName(channelName)
 		{
 		}
 
@@ -59,7 +59,7 @@ namespace CvRtsp
 		/// @return True if delivery successful.
 		bool AddVideoMediaSamples(const std::vector<std::shared_ptr<MediaSample>>& mediaSamples)
 		{
-			return deliverVideo(m_channelId, mediaSamples);
+			return deliverVideo(m_channelName, mediaSamples);
 		}
 
 		/// The addAudioMediaSamples() can be called to deliver media samples to 
@@ -70,7 +70,7 @@ namespace CvRtsp
 		/// @return True if delivery successful.
 		bool AddAudioMediaSamples(const std::vector<std::shared_ptr<MediaSample>>& mediaSamples)
 		{
-			return deliverAudio(m_channelId, mediaSamples);
+			return deliverAudio(m_channelName, mediaSamples);
 		}
 
 	private:
@@ -80,7 +80,7 @@ namespace CvRtsp
 		/// @param mediaSamples Vector containing video samples.
 		///
 		/// @return True if delivery successful.
-		virtual bool deliverVideo(uint32_t channelId, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
+		virtual bool deliverVideo(const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
 
 		/// The subclass must implement delivery of audio media samples to the media sink
 		///
@@ -88,10 +88,10 @@ namespace CvRtsp
 		/// @param mediaSamples Vector containing audio samples.
 		///
 		/// @return True if delivery successful.
-		virtual bool deliverAudio(uint32_t channelId, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
+		virtual bool deliverAudio(const std::string& channelName, const std::vector<std::shared_ptr<MediaSample>>& mediaSamples) = 0;
 
 		/// Unique channel id
-		uint32_t m_channelId;
+		std::string m_channelName;
 	};
 }
 

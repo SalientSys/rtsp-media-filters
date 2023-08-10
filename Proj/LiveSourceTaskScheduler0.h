@@ -36,7 +36,7 @@ namespace CvRtsp
 	class ChannelManager;
 	class LiveMediaSubsession;
 
-	using LiveMediaSubSessionMap = std::map<std::pair<unsigned, unsigned>, LiveMediaSubsession*>;
+	using LiveMediaSubSessionMap = std::map<std::pair<std::string, unsigned>, LiveMediaSubsession*>;
 
 	/// Maximum number of cycles in the while loop.
 	const unsigned MaxRevolutions = 60;
@@ -77,7 +77,7 @@ namespace CvRtsp
 		/// @param[in] channelId Channel id.
 		/// @param[in] sourceId Source id.
 		/// @param[in] mediaSubsession Live media subsession.
-		void AddMediaSubsession(uint32_t channelId, uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
+		void AddMediaSubsession(const std::string& channelName, uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
 
 		/// 
 		/// Deregisters a LiveMediaSubsession from the scheduler.
@@ -85,7 +85,7 @@ namespace CvRtsp
 		/// @param[in] channelId Channel id.
 		/// @param[in] sourceId Source id.
 		/// @param[in] mediaSubsession Live media subsession.
-		void RemoveMediaSubsession(uint32_t channelId, uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
+		void RemoveMediaSubsession(const std::string& channelName, uint32_t sourceId, LiveMediaSubsession* mediaSubsession);
 
 		/// 
 		/// Deregisters a LiveMediaSubsession from the scheduler.
@@ -94,7 +94,7 @@ namespace CvRtsp
 		/// @param[in] sourceId Source id.
 		/// 
 		/// @return mediaSubsession Live media subsession.
-		LiveMediaSubsession* GetMediaSubsession(uint32_t channelId, uint32_t sourceId);
+		LiveMediaSubsession* GetMediaSubsession(const std::string& channelName, uint32_t sourceId);
 
 		/// 
 		/// Processes all registered media subsessions.
