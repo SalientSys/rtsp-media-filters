@@ -155,6 +155,8 @@ RetrieveMediaSampleFromBuffer()
 	//KE @TODO - need to optimize I-frame parsing above in splitPayloadIntoMediaSamples() then below `false`
 	//in the if condtion can be removed, else takes ~30 seconds to display first frame in vlc client if we wait.
 
+	// TODO NCM: Is this part of the reason why we are seeing decoder errors? Are P-frames sent before I-frames?
+
 	// Have we not sent a key frame until now ?
 	if (/*m_isWaitingForKeyFrame*/false) 
 	{
@@ -194,7 +196,7 @@ RetrieveMediaSampleFromBuffer()
 			}
 		}
 	}
-
+	// TODO NCM: Add logging for key frames?
 	std::stringstream ss;
 	ss << " Media Sample queue size : " << m_mediaSampleQueue.size();
 	log_rtsp_debug(ss.str());

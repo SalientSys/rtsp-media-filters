@@ -49,7 +49,6 @@ void
 LiveSourceTaskScheduler0::
 doEventLoop(char volatile* watchVariable)
 {
-	//Start();
 	// Repeatedly loop, handling readable sockets and timed events:
 	while (true)
 	{
@@ -80,7 +79,9 @@ doEventLoop(char volatile* watchVariable)
 		}
 		log_rtsp_debug("Calling processLiveSources.");
 		processLiveSources();
-		processMediaSubsessions();
+		// TODO NCM: Uncomment after testing
+		// Note: This method was added in 1.0.4
+		//processMediaSubsessions();
 
 		log_rtsp_debug("Done processLiveSources, calling SingleStep.");
 
