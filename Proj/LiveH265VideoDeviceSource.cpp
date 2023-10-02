@@ -52,7 +52,7 @@ CreateNew(UsageEnvironment& env, unsigned clientId,
 	// When constructing a 'simple' LiveDeviceSource we'll just create a simple frame grabber
 	auto videoDeviceSource = new LiveH265VideoDeviceSource(env, clientId, parentSubsession,
 		vps, sps, pps, frameGrabber, rateAdaptationFactory, globalRateControl);
-	OutPacketBuffer::increaseMaxSizeTo(300000); // bytes
+	OutPacketBuffer::increaseMaxSizeTo(700000); // bytes
 	return videoDeviceSource;
 }
 
