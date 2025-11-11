@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props" Condition="Exists('packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props')" />
-  <Import Project="packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props" Condition="Exists('packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props')" />
-  <Import Project="packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props" Condition="Exists('packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props')" />
+  <Import Project="packages\SalientSys.oneTBB.2022.3.0\build\native\SalientSys.oneTBB.props" Condition="Exists('packages\SalientSys.oneTBB.2022.3.0\build\native\SalientSys.oneTBB.props')" />
+  <Import Project="packages\SalientSys.live555.v143.mt.1.0.3.3\build\native\SalientSys.live555.v143.mt.props" Condition="Exists('packages\SalientSys.live555.v143.mt.1.0.3.3\build\native\SalientSys.live555.v143.mt.props')" />
+  <Import Project="packages\SalientSys.openssl.3.0.6\build\native\SalientSys.openssl.props" Condition="Exists('packages\SalientSys.openssl.3.0.6\build\native\SalientSys.openssl.props')" />
+  <Import Project="packages\SalientSys.rtsp-logger.v143.mt.1.0.3\build\native\SalientSys.rtsp-logger.v143.mt.props" Condition="Exists('packages\SalientSys.rtsp-logger.v143.mt.1.0.3\build\native\SalientSys.rtsp-logger.v143.mt.props')" />
   <Import Project="packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props" Condition="Exists('packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props')" />
-  <Import Project="packages\SalientSys.intel-tbb.10.0.3\build\native\SalientSys.intel-tbb.props" Condition="Exists('packages\SalientSys.intel-tbb.10.0.3\build\native\SalientSys.intel-tbb.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -34,26 +34,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -77,24 +77,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\lib\v142\mt\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\lib\v143\mt\$(Configuration)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)32</TargetName>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\lib\v142\mt\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\lib\v143\mt\$(Configuration)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\lib\v142\mt\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\lib\v143\mt\$(Configuration)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)32</TargetName>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\lib\v142\mt\$(Configuration)\$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\lib\v143\mt\$(Configuration)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -268,11 +268,11 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\SalientSys.intel-tbb.10.0.3\build\native\SalientSys.intel-tbb.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.intel-tbb.10.0.3\build\native\SalientSys.intel-tbb.props'))" />
     <Error Condition="!Exists('packages\boost.1.72.0.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\boost.1.72.0.0\build\boost.targets'))" />
     <Error Condition="!Exists('packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.poco.foundation.1.7.8\build\native\SalientSys.poco.foundation.props'))" />
-    <Error Condition="!Exists('packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.openssl.3.0.5\build\native\SalientSys.openssl.props'))" />
-    <Error Condition="!Exists('packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.live555.v142.mt.1.0.3.1\build\native\SalientSys.live555.v142.mt.props'))" />
-    <Error Condition="!Exists('packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.rtsp-logger.v142.mt.1.0.4\build\native\SalientSys.rtsp-logger.v142.mt.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.rtsp-logger.v143.mt.1.0.3\build\native\SalientSys.rtsp-logger.v143.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.rtsp-logger.v143.mt.1.0.3\build\native\SalientSys.rtsp-logger.v143.mt.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.openssl.3.0.6\build\native\SalientSys.openssl.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.openssl.3.0.6\build\native\SalientSys.openssl.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.live555.v143.mt.1.0.3.3\build\native\SalientSys.live555.v143.mt.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.live555.v143.mt.1.0.3.3\build\native\SalientSys.live555.v143.mt.props'))" />
+    <Error Condition="!Exists('packages\SalientSys.oneTBB.2022.3.0\build\native\SalientSys.oneTBB.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SalientSys.oneTBB.2022.3.0\build\native\SalientSys.oneTBB.props'))" />
   </Target>
 </Project>

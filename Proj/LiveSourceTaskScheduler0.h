@@ -67,7 +67,7 @@ namespace CvRtsp
 		///
 		/// @remark Method naming does not match convention, but instead, that of the base class
 		/// that is being overridden.
-		void doEventLoop(char volatile* watchVariable) override;
+		void doEventLoop(EventLoopWatchVariable* watchVariable) override;
 
 		/// Set the maximum poll delay time. 
 		///
