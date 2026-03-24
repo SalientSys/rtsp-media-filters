@@ -47,7 +47,7 @@ LiveSourceTaskScheduler0(ChannelManager& channelManager)
 
 void
 LiveSourceTaskScheduler0::
-doEventLoop(char volatile* watchVariable)
+doEventLoop(EventLoopWatchVariable* watchVariable)
 {
 	//Start();
 	// Repeatedly loop, handling readable sockets and timed events:
@@ -55,7 +55,6 @@ doEventLoop(char volatile* watchVariable)
 	{
 		if (watchVariable != nullptr)
 		{
-			assert(atoi(const_cast<char*>(watchVariable)) >= 0);
 			if (*watchVariable != 0)
 			{
 				auto bExitEventLoop = false;

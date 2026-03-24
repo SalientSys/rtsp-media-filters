@@ -203,7 +203,7 @@ ServerMediaSession*
 LiveRtspServer::
 lookupServerMediaSession(char const* streamName)
 {
-	log_rtsp_debug("Looking up new ServerMediaSession: " + string(streamName) + ".");
+	log_rtsp_debug("Looking up new ServerMediaSession: " + std::string(streamName) + ".");
 	return getServerMediaSession(streamName);
 }
 

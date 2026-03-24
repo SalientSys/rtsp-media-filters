@@ -250,7 +250,7 @@ void
 LiveMediaSubsession::
 getStreamParameters(uint32_t clientSessionId, struct sockaddr_storage const& clientAddress,
 	Port const& clientRTPPort, Port const& clientRTCPPort, int tcpSocketNum, unsigned char rtpChannelId,
-	unsigned char rtcpChannelId, struct sockaddr_storage& destinationAddress, u_int8_t& destinationTTL,
+	unsigned char rtcpChannelId, TLSState* tlsState, struct sockaddr_storage& destinationAddress, u_int8_t& destinationTTL,
 	Boolean& isMulticast, Port& serverRTPPort, Port& serverRTCPPort, void*& streamToken)
 {
 	if (addressIsNull(destinationAddress))
@@ -268,7 +268,7 @@ getStreamParameters(uint32_t clientSessionId, struct sockaddr_storage const& cli
 	}
 
 	OnDemandServerMediaSubsession::getStreamParameters(clientSessionId, clientAddress, clientRTPPort, clientRTCPPort, tcpSocketNum, rtpChannelId,
-		rtcpChannelId, destinationAddress, destinationTTL, isMulticast, serverRTPPort, serverRTCPPort, streamToken);
+		rtcpChannelId, nullptr, destinationAddress, destinationTTL, isMulticast, serverRTPPort, serverRTCPPort, streamToken);
 }
 
 std::vector<uint32_t>

@@ -77,7 +77,7 @@ bool LiveAMRAudioDeviceSource::retrieveMediaSampleFromBuffer()
     {
 #ifdef DEBUG
         fprintf(stderr, "Invalid frame header 0x%02x (padding bits (0x83) are not zero)\n", fLastFrameHeader);
-        log_rtsp_warning("Invalid frame header " + to_string(fLastFrameHeader) + " (padding bits(0x83) are not zero).");
+        log_rtsp_warning("Invalid frame header " + std::to_string(fLastFrameHeader) + " (padding bits(0x83) are not zero).");
 #endif
     }
     else
@@ -88,7 +88,7 @@ bool LiveAMRAudioDeviceSource::retrieveMediaSampleFromBuffer()
         {
 #ifdef DEBUG
             fprintf(stderr, "Invalid FT field %d (from frame header 0x%02x)\n", ft, fLastFrameHeader);
-            log_rtsp_warning("Invalid FT field  " + to_string(ft) + " (from frame header " + to_string(fLastFrameHeader) + ".");
+            log_rtsp_warning("Invalid FT field  " + std::to_string(ft) + " (from frame header " + std::to_string(fLastFrameHeader) + ".");
 #endif
         }
         else
@@ -96,7 +96,7 @@ bool LiveAMRAudioDeviceSource::retrieveMediaSampleFromBuffer()
             // The frame header is OK
 
             fprintf(stderr, "Valid frame header 0x%02x -> ft %d -> frame size %d\n", fLastFrameHeader, ft, fFrameSize);
-            log_rtsp_debug("Valid frame header " + to_string(fLastFrameHeader) + " -> ft " + to_string(ft) + " -> frame size " + to_string(fFrameSize) + ".");
+            log_rtsp_debug("Valid frame header " + std::to_string(fLastFrameHeader) + " -> ft " + std::to_string(ft) + " -> frame size " + std::to_string(fFrameSize) + ".");
 
         }
     }
